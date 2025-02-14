@@ -6,23 +6,23 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ScrollToTopOnMount from "../template/ScrollToTopOnMount";
 
 const categories = [
-  "All Products",
-  "Phones & Tablets",
-  "Cases & Covers",
-  "Screen Guards",
-  "Cables & Chargers",
-  "Power Banks",
+  "Hoa Mừng Sinh Nhật",
+  "Hoa Hồng Đỏ",
+  "Hoa Ngày 8/3",
+  "Hoa Khai Chương",
+  "Hoa Cưới",
+  "Hoa Đẹp",
 ];
 
-const brands = ["Apple", "Samsung", "Google", "HTC"];
+const brands = ["Hoa Dân Tổ", "Hoa Gucci", "Hoa Dior", "Hoa YSL"];
 
-const manufacturers = ["HOCO", "Nillkin", "Remax", "Baseus"];
+const manufacturers = ["Afriflora Sher (Ethiopia)", "Dümmen Orange (Hà Lan)", "Selecta One (Đức)", "Ball Horticultural (Mỹ)"];
 
 function FilterMenuLeft() {
   return (
     <ul className="list-group list-group-flush rounded">
       <li className="list-group-item d-none d-lg-block">
-        <h5 className="mt-1 mb-2">Browse</h5>
+        <h5 className="mt-1 mb-2">Tìm kiếm nhiều nhất</h5>
         <div className="d-flex flex-wrap my-2">
           {categories.map((v, i) => {
             return (
@@ -39,7 +39,7 @@ function FilterMenuLeft() {
         </div>
       </li>
       <li className="list-group-item">
-        <h5 className="mt-1 mb-1">Brands</h5>
+        <h5 className="mt-1 mb-1">Nhãn Hàng</h5>
         <div className="d-flex flex-column">
           {brands.map((v, i) => {
             return (
@@ -54,7 +54,7 @@ function FilterMenuLeft() {
         </div>
       </li>
       <li className="list-group-item">
-        <h5 className="mt-1 mb-1">Manufacturers</h5>
+        <h5 className="mt-1 mb-1">Nơi Sản Xuất</h5>
         <div className="d-flex flex-column">
           {manufacturers.map((v, i) => {
             return (
@@ -69,7 +69,7 @@ function FilterMenuLeft() {
         </div>
       </li>
       <li className="list-group-item">
-        <h5 className="mt-1 mb-2">Price Range</h5>
+        <h5 className="mt-1 mb-2">Chọn Giá</h5>
         <div className="d-grid d-block mb-3">
           <div className="form-floating mb-2">
             <input
@@ -116,7 +116,7 @@ function ProductList() {
               to="/products"
               replace
             >
-              All Prodcuts
+              Tất cả sản phẩm
             </Link>
           </li>
           <li className="breadcrumb-item active" aria-current="page">
@@ -188,10 +188,11 @@ function ProductList() {
                   aria-label="Default select example"
                   defaultValue=""
                 >
-                  <option value="">All Models</option>
-                  <option value="1">iPhone X</option>
-                  <option value="2">iPhone Xs</option>
-                  <option value="3">iPhone 11</option>
+                  <option value="">Tất cả</option>
+                  <option value="1">Hoa Mừng Sinh Nhật</option>
+                  <option value="2">Hoa Khai Chương</option>
+                  <option value="3">Hoa Tươi</option>
+                  <option value="4">Hoa Ngày 8/3</option>
                 </select>
               </div>
               <div className="col-lg-9 col-xl-5 offset-xl-4 d-flex flex-row">

@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 function Product(props) {
   const price = 10000;
   let percentOff;
-  let offPrice = `${price}Ks`;
+  let offPrice = `${price}VND`;
 
   if (props.percentOff && props.percentOff > 0) {
     percentOff = (
@@ -19,7 +19,7 @@ function Product(props) {
 
     offPrice = (
       <>
-        <del>{price}Ks</del> {price - (props.percentOff * price) / 100}Ks
+        <del>{price}VND</del> {price - (props.percentOff * price) / 100}VND
       </>
     );
   }
@@ -30,15 +30,16 @@ function Product(props) {
         <Link to="/products/1" href="!#" replace>
           {percentOff}
           <img
-            className="card-img-top bg-dark cover"
-            height="200"
-            alt=""
-            src={Image}
-          />
+          className="card-img-top bg-dark"
+          style={{ objectFit: "cover" }}
+          height="240"
+          alt="Hoa Mừng Sinh Nhật"
+          src="/images/hoasinhnhat/hoasinhnhat1.jpg"
+        />
         </Link>
         <div className="card-body">
           <h5 className="card-title text-center text-dark text-truncate">
-            Nillkin iPhone X cover
+          Hoa Mừng Sinh Nhật
           </h5>
           <p className="card-text text-center text-muted mb-0">{offPrice}</p>
           <div className="d-grid d-block">

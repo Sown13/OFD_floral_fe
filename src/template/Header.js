@@ -12,7 +12,7 @@ function Header() {
 
   function changeNav(event) {
     if (openedDrawer) {
-      setOpenedDrawer(false)
+      setOpenedDrawer(true)
     }
   }
 
@@ -21,19 +21,20 @@ function Header() {
       <nav className="navbar fixed-top navbar-expand-lg navbar-light bg-white border-bottom">
         <div className="container-fluid">
           <Link className="navbar-brand" to="/" onClick={changeNav}>
-            <FontAwesomeIcon
+            {/* <FontAwesomeIcon
               icon={["fab", "bootstrap"]}
               className="ms-1"
               size="lg"
-            />
-            <span className="ms-2 h5">Shop</span>
+            /> */}
+            <FontAwesomeIcon icon={["fas", "store"]} className="ms-1" size="lg" />
+            <span className="ms-2 h5">Shop Florist</span>
           </Link>
 
           <div className={"navbar-collapse offcanvas-collapse " + (openedDrawer ? 'open' : '')}>
             <ul className="navbar-nav me-auto mb-lg-0">
               <li className="nav-item">
                 <Link to="/products" className="nav-link" replace onClick={changeNav}>
-                  Explore
+                  Products
                 </Link>
               </li>
             </ul>
