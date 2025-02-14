@@ -1,4 +1,3 @@
-import Image from "../nillkin-case-1.jpg";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -30,16 +29,16 @@ function Product(props) {
         <Link to="/products/1" href="!#" replace>
           {percentOff}
           <img
-          className="card-img-top bg-dark"
-          style={{ objectFit: "cover" }}
-          height="240"
-          alt="Hoa Mừng Sinh Nhật"
-          src="/images/hoasinhnhat/hoasinhnhat1.jpg"
-        />
+            className="card-img-top bg-dark"
+            style={{ objectFit: "cover" }}
+            height="240"
+            alt="Hoa Mừng Sinh Nhật"
+            src="/images/hoasinhnhat/hoasinhnhat1.jpg"
+          />
         </Link>
         <div className="card-body">
           <h5 className="card-title text-center text-dark text-truncate">
-          Hoa Mừng Sinh Nhật
+            Hoa Mừng Sinh Nhật
           </h5>
           <p className="card-text text-center text-muted mb-0">{offPrice}</p>
           <div className="d-grid d-block">
