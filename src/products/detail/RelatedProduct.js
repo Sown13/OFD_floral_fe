@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 function RelatedProduct(props) {
   const price = 10000;
   let percentOff;
-  let offPrice = `${price}Ks`;
+  let offPrice = `${price}VND`;
 
   if (props.percentOff && props.percentOff > 0) {
     percentOff = (
@@ -18,7 +18,7 @@ function RelatedProduct(props) {
 
     offPrice = (
       <>
-        <del>{price}Ks</del> {price - (props.percentOff * price) / 100}Ks
+        <del>{price}VND</del> {price - (props.percentOff * price) / 100}VND
       </>
     );
   }
@@ -35,12 +35,12 @@ function RelatedProduct(props) {
         <img
           className="card-img-top bg-dark cover"
           height="200"
-          alt=""
-          src={Image}
+          alt="Hoa Mừng Sinh Nhật"
+          src="/images/hoasinhnhat/hoasinhnhat1.jpg"
         />
         <div className="card-body">
           <h5 className="card-title text-center text-dark text-truncate">
-            Nillkin iPhone X cover
+            Hoa Mừng Sinh Nhật
           </h5>
           <p className="card-text text-center text-muted">{offPrice}</p>
         </div>

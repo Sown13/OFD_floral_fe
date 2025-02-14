@@ -2,6 +2,7 @@ import Banner from "./Banner";
 import FeatureProduct from "./FeatureProduct";
 import ScrollToTopOnMount from "../template/ScrollToTopOnMount";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFacebook, faInstagram, faTwitter } from "@fortawesome/free-brands-svg-icons";
 import { Link } from "react-router-dom";
 
 function Landing() {
@@ -36,16 +37,16 @@ Hãy để những cánh hoa thay lời bạn muốn nói! 💐✨
       <div className="d-flex flex-column bg-white py-4">
         <h5 className="text-center mb-3">Follow us on</h5>
         <div className="d-flex justify-content-center">
-          <a href="!#" className="me-3">
-            <FontAwesomeIcon icon={["fab", "facebook"]} size="2x" />
+          <a href="!#" className="me-3" style={{ color: "#1877F2" }}> {/* Facebook màu xanh đặc trưng */}
+            <FontAwesomeIcon icon={faFacebook} size="2x" />
           </a>
-          <a href="!#">
-            <FontAwesomeIcon icon={["fab", "instagram"]} size="2x" />
+          <a href="!#" style={{ color: "#E4405F" }}> {/* Instagram màu hồng đặc trưng */}
+            <FontAwesomeIcon icon={faInstagram} size="2x" />
           </a>
-          <a href="!#" className="ms-3">
-            <FontAwesomeIcon icon={["fab", "twitter"]} size="2x" />
+          <a href="!#" className="ms-3" style={{ color: "#1DA1F2" }}> {/* Twitter màu xanh đặc trưng */}
+            <FontAwesomeIcon icon={faTwitter} size="2x" />
           </a>
-        </div>
+        </div>;
       </div>
     </>
   );

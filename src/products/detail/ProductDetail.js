@@ -23,7 +23,7 @@ function ProductDetail() {
             </a>
           </li>
           <li className="breadcrumb-item active" aria-current="page">
-            Nillkin iPhone X cover
+            Detail Product
           </li>
         </ol>
       </nav>
@@ -37,8 +37,8 @@ function ProductDetail() {
                   <a key={i} href="!#">
                     <img
                       className={"rounded mb-2 ratio " + selected}
-                      alt=""
-                      src={Image}
+                      alt="Hoa Mừng Sinh Nhật"
+                      src="/images/hoasinhnhat/hoasinhnhat1.jpg"
                     />
                   </a>
                 );
@@ -51,8 +51,8 @@ function ProductDetail() {
             <div className="col-12 mb-4">
               <img
                 className="border rounded ratio ratio-1x1"
-                alt=""
-                src={Image}
+                alt="Hoa Mừng Sinh Nhật"
+                src="/images/hoasinhnhat/hoasinhnhat1.jpg"
               />
             </div>
           </div>
@@ -70,8 +70,8 @@ function ProductDetail() {
                         className="cover rounded mb-2 me-2"
                         width="70"
                         height="70"
-                        alt=""
-                        src={Image}
+                        alt="Hoa Mừng Sinh Nhật"
+                        src="/images/hoasinhnhat/hoasinhnhat1.jpg"
                       />
                     </a>
                   );
@@ -83,8 +83,8 @@ function ProductDetail() {
 
         <div className="col-lg-5">
           <div className="d-flex flex-column h-100">
-            <h2 className="mb-1">Nillkin iPhone X cover</h2>
-            <h4 className="text-muted mb-4">10000 Ks</h4>
+            <h2 className="mb-1"> Hoa Mừng Sinh Nhật</h2>
+            <h4 className="text-muted mb-4">10000 VND</h4>
 
             <div className="row g-3 mb-4">
               <div className="col">
@@ -100,38 +100,31 @@ function ProductDetail() {
             <h4 className="mb-0">Details</h4>
             <hr />
             <dl className="row">
-              <dt className="col-sm-4">Code</dt>
-              <dd className="col-sm-8 mb-3">C0001</dd>
+              {/* <dt className="col-sm-4">Code</dt>
+              <dd className="col-sm-8 mb-3">C0001</dd> */}
 
-              <dt className="col-sm-4">Category</dt>
+              <dt className="col-sm-4">Loại Hoa</dt>
               <dd className="col-sm-8 mb-3">Cases & Covers</dd>
 
-              <dt className="col-sm-4">Brand</dt>
-              <dd className="col-sm-8 mb-3">iPhone X</dd>
+              <dt className="col-sm-4">Nhãn Hàng</dt>
+              <dd className="col-sm-8 mb-3">Hoa Gucci</dd>
 
-              <dt className="col-sm-4">Manufacturer</dt>
-              <dd className="col-sm-8 mb-3">Nillkin</dd>
+              <dt className="col-sm-4">Nơi sản xuất</dt>
+              <dd className="col-sm-8 mb-3">Dümmen Orange (Hà Lan)</dd>
 
-              <dt className="col-sm-4">Color</dt>
-              <dd className="col-sm-8 mb-3">Red, Green, Blue, Pink</dd>
+              <dt className="col-sm-4">Màu sắc</dt>
+              <dd className="col-sm-8 mb-3">Red, Pink</dd>
 
-              <dt className="col-sm-4">Status</dt>
-              <dd className="col-sm-8 mb-3">Instock</dd>
+              <dt className="col-sm-4">Trạng Thái</dt>
+              <dd className="col-sm-8 mb-3">Còn Hàng</dd>
             </dl>
 
-            <h4 className="mb-0">Description</h4>
+            <h4 className="mb-0">🌸 Lời chúc</h4>
             <hr />
             <p className="lead flex-shrink-0">
               <small>
-                Nature (TPU case) use environmental non-toxic TPU, silky smooth
-                and ultrathin. Glittering and translucent, arbitrary rue
-                reserved volume button cutouts, easy to operate. Side frosted
-                texture anti-slipping, details show its concern; transparent
-                frosted logo shows its taste. The release of self, the flavor of
-                life. Nillkin launched Nature transparent soft cover, only to
-                retain the original phone style. Subverting tradition,
-                redefinition. Thinner design Environmental texture better hand
-                feeling.
+Chúc mừng sinh nhật! Mong rằng mỗi cánh hoa trong bó hoa này sẽ mang đến cho bạn niềm vui, hạnh phúc và những điều tốt đẹp nhất.
+ Chúc bạn một tuổi mới tràn đầy yêu thương và thành công!
               </small>
             </p>
           </div>
