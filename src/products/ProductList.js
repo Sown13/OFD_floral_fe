@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 import Product from "./Product";
 import ProductH from "./ProductH";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ScrollToTopOnMount from "../template/ScrollToTopOnMount";
+import floralsServices from "../services/floralsServices";
 
 const categories = [
   "Hoa Mừng Sinh Nhật",
@@ -19,6 +20,23 @@ const brands = ["Hoa Dân Tổ", "Hoa Gucci", "Hoa Dior", "Hoa YSL"];
 const manufacturers = ["Afriflora Sher (Ethiopia)", "Dümmen Orange (Hà Lan)", "Selecta One (Đức)", "Ball Horticultural (Mỹ)"];
 
 function FilterMenuLeft() {
+  const [products, setproducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    floralsServices
+      .getFlorals()
+      .then((data) => {
+        console.log("Dữ liệu nhận được từ API:", data);
+        console.log("Danh sách category nhận được:", data.map((item) => item.category));
+  
+        const uniqueCategories = [...new Set(data.map((item) => item.category))];
+        setCategories(uniqueCategories);
+      })
+      .catch((error) => console.error("Lỗi khi lấy dữ liệu:", error));
+  }, []);
+  
+
   return (
     <ul className="list-group list-group-flush rounded">
       <li className="list-group-item d-none d-lg-block">
@@ -183,17 +201,14 @@ function ProductList() {
           <div className="d-flex flex-column h-100">
             <div className="row mb-3">
               <div className="col-lg-3 d-none d-lg-block">
-                <select
-                  className="form-select"
-                  aria-label="Default select example"
-                  defaultValue=""
-                >
-                  <option value="">Tất cả</option>
-                  <option value="1">Hoa Mừng Sinh Nhật</option>
-                  <option value="2">Hoa Khai Chương</option>
-                  <option value="3">Hoa Tươi</option>
-                  <option value="4">Hoa Ngày 8/3</option>
-                </select>
+              <select className="form-select" defaultValue="" aria-label="Default select example">
+                <option value="">Tất cả</option>
+                {categories.map((category, index) => (
+                  <option key={index} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
               </div>
               <div className="col-lg-9 col-xl-5 offset-xl-4 d-flex flex-row">
                 <div className="input-group">

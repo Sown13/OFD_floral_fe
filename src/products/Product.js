@@ -1,54 +1,75 @@
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import floralsServices from "../services/floralsServices";
+import { useEffect, useState } from "react";
 
-function Product(props) {
-  const price = 10000;
-  let percentOff;
-  let offPrice = `${price}VND`;
+function Product() {
+  const [florals, setFlorals] = useState([]);
 
-  if (props.percentOff && props.percentOff > 0) {
-    percentOff = (
-      <div
-        className="badge bg-dim py-2 text-white position-absolute"
-        style={{ top: "0.5rem", right: "0.5rem" }}
-      >
-        {props.percentOff}% OFF
-      </div>
-    );
-
-    offPrice = (
-      <>
-        <del>{price}VND</del> {price - (props.percentOff * price) / 100}VND
-      </>
-    );
-  }
+  useEffect(() => {
+    floralsServices
+      .getFlorals()
+      .then((data) => {
+        console.log("Dữ liệu nhận được từ API:", data);
+        setFlorals(data);
+      })
+      .catch((error) => console.error("Lỗi khi lấy dữ liệu:", error));
+  }, []);
 
   return (
-    <div className="col">
-      <div className="card shadow-sm">
-        <Link to="/products/1" href="!#" replace>
-          {percentOff}
-          <img
-            className="card-img-top bg-dark"
-            style={{ objectFit: "cover" }}
-            height="240"
-            alt="Hoa Mừng Sinh Nhật"
-            src="/images/hoasinhnhat/hoasinhnhat1.jpg"
-          />
-        </Link>
-        <div className="card-body">
-          <h5 className="card-title text-center text-dark text-truncate">
-            Hoa Mừng Sinh Nhật
-          </h5>
-          <p className="card-text text-center text-muted mb-0">{offPrice}</p>
-          <div className="d-grid d-block">
-            <button className="btn btn-outline-dark mt-3">
-              <FontAwesomeIcon icon={["fas", "cart-plus"]} /> Add to cart
-            </button>
+    <>
+      {florals.map((floral, index) => {
+        const isDiscounted = index < 2; // Giảm giá 15% cho 2 sản phẩm đầu tiên
+        const discountedPrice = isDiscounted ? floral.price * 0.85 : floral.price;
+
+        return (
+          <div className="col" key={floral._id}>
+            <div className="card shadow-sm">
+              <Link to={`/products/${floral._id}`} replace>
+                {isDiscounted && (
+                  <div
+                    className="badge bg-danger py-2 text-white position-absolute"
+                    style={{ top: "0.5rem", right: "0.5rem" }}
+                  >
+                    15% OFF
+                  </div>
+                )}
+
+                <img
+                  className="card-img-top bg-dark"
+                  style={{ objectFit: "cover" }}
+                  height="240"
+                  alt={floral.name}
+                  src={floral.images}
+                />
+              </Link>
+              <div className="card-body">
+                <h5 className="card-title text-center text-dark text-truncate">
+                  {floral.name}
+                </h5>
+                <p className="card-text text-center text-muted mb-0">
+                  {isDiscounted ? (
+                    <>
+                      <del>{floral.price.toLocaleString()} VND</del>{" "}
+                      <span className="text-danger fw-bold">
+                        {discountedPrice.toLocaleString()} VND
+                      </span>
+                    </>
+                  ) : (
+                    `${floral.price.toLocaleString()} VND`
+                  )}
+                </p>
+                <div className="d-grid d-block">
+                  <button className="btn btn-outline-dark mt-3">
+                    <FontAwesomeIcon icon={["fas", "cart-plus"]} /> Add to cart
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    </div>
+        );
+      })}
+    </>
   );
 }
 
