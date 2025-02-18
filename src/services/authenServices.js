@@ -1,6 +1,6 @@
-import api from "./api";
+import api from "../api/api";
 
-export const signUp = async (userData) => {
+const signUp = async (userData) => {
   try {
     const response = await api.post("/signup", userData);
     return response.data;
@@ -10,7 +10,7 @@ export const signUp = async (userData) => {
   }
 };
 
-export const login = async (credentials) => {
+const login = async (credentials) => {
   try {
     const response = await api.post("/login", credentials);
     const { token } = response.data;
@@ -26,7 +26,7 @@ export const login = async (credentials) => {
   }
 };
 
-export const logout = async () => {
+const logout = async () => {
   try {
     await api.post("/logout");
   } catch (error) {
@@ -36,3 +36,11 @@ export const logout = async () => {
   localStorage.removeItem("token");
   console.log("User logged out.");
 };
+
+const authenServices = {
+  signUp,
+  login,
+  logout,
+};
+
+export default authenServices;

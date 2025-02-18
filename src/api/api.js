@@ -1,8 +1,8 @@
 import axios from "axios";
-import { logout } from "./authService";
+import authenServices from "../services/authenServices";
 
 const api = axios.create({
-  baseURL: "https://your-api-url.com/api/v1",
+  baseURL: "http://localhost:8080/api/v1",
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
@@ -29,7 +29,7 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       console.warn("Unauthorized! Logging out...");
-      logout();
+      authenServices.logout();
       window.location.href = "/login";
     }
     return Promise.reject(error);
