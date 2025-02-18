@@ -1,70 +1,76 @@
-import axios from "axios";
+import api from "../api/api";
 
-const URL = axios.create({
-  baseURL: "http://localhost:8080",
-});
-
-// Lấy danh sách tất cả florals
-export const getFlorals = async () => {
+const getFlorals = async () => {
   try {
-    const response = await URL.get("/florals");
+    const response = await api.get("/florals");
     return response.data;
   } catch (error) {
-    console.error("Error fetching florals:", error.response?.data || error.message);
+    console.error(
+      "Error fetching florals:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
 
-// Lấy chi tiết một floral theo ID
-export const getFloralById = async (id) => {
+const getFloralById = async (id) => {
   try {
-    const response = await URL.get(`/florals/${id}`);
+    const response = await api.get(`/florals/${id}`);
     return response.data;
   } catch (error) {
-    console.error("Error fetching floral:", error.response?.data );
+    console.error(
+      "Error fetching floral:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
 
-// Thêm một floral mới
-export const createFloral = async (floralData) => {
+const createFloral = async (floralData) => {
   try {
-    const response = await URL.post("/florals", floralData);
+    const response = await api.post("/florals", floralData);
     return response.data;
   } catch (error) {
-    console.error("Error creating floral:", error.response?.data || error.message);
+    console.error(
+      "Error creating floral:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
 
-// Cập nhật thông tin một floral
-export const updateFloral = async (id, floralData) => {
+const updateFloral = async (id, floralData) => {
   try {
-    const response = await URL.put(`/florals/${id}`, floralData);
+    const response = await api.put(`/florals/${id}`, floralData);
     return response.data;
   } catch (error) {
-    console.error("Error updating floral:", error.response?.data || error.message);
+    console.error(
+      "Error updating floral:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
 
-// Xóa một floral
-export const deleteFloral = async (id) => {
+const deleteFloral = async (id) => {
   try {
-    await URL.delete(`/florals/${id}`);
+    await api.delete(`/florals/${id}`);
     console.log(`Floral with ID ${id} deleted.`);
   } catch (error) {
-    console.error("Error deleting floral:", error.response?.data || error.message);
+    console.error(
+      "Error deleting floral:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
 
 const floralsServices = {
-    getFlorals,
-    getFloralById,
-    createFloral,
-    updateFloral,
-    deleteFloral,
-  };
-  
-  export default floralsServices;
+  getFlorals,
+  getFloralById,
+  createFloral,
+  updateFloral,
+  deleteFloral,
+};
+
+export default floralsServices;
