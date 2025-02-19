@@ -26,22 +26,39 @@ function Header() {
               className="ms-1"
               size="lg"
             /> */}
-            <FontAwesomeIcon icon={["fas", "store"]} className="ms-1" size="lg" />
+            <FontAwesomeIcon
+              icon={["fas", "store"]}
+              className="ms-1"
+              size="lg"
+            />
             <span className="ms-2 h5">Shop Florist</span>
           </Link>
 
-          <div className={"navbar-collapse offcanvas-collapse " + (openedDrawer ? 'open' : '')}>
+          <div
+            className={
+              "navbar-collapse offcanvas-collapse " +
+              (openedDrawer ? "open" : "")
+            }
+          >
             <ul className="navbar-nav me-auto mb-lg-0">
               <li className="nav-item">
-                <Link to="/products" className="nav-link" replace onClick={changeNav}>
+                <Link
+                  to="/products"
+                  className="nav-link"
+                  replace
+                  onClick={changeNav}
+                >
                   Products
                 </Link>
               </li>
             </ul>
-            <button type="button" className="btn btn-outline-dark me-3 d-none d-lg-inline">
+            <Link
+              to="/cart"
+              className="btn btn-outline-dark me-3 d-none d-lg-inline"
+            >
               <FontAwesomeIcon icon={["fas", "shopping-cart"]} />
               <span className="ms-3 badge rounded-pill bg-dark">0</span>
-            </button>
+            </Link>
             <ul className="navbar-nav mb-2 mb-lg-0">
               <li className="nav-item dropdown">
                 <a
@@ -60,12 +77,20 @@ function Header() {
                   aria-labelledby="userDropdown"
                 >
                   <li>
-                    <Link to="/login" className="dropdown-item" onClick={changeNav}>
+                    <Link
+                      to="/login"
+                      className="dropdown-item"
+                      onClick={changeNav}
+                    >
                       Login
                     </Link>
                   </li>
                   <li>
-                    <Link to="/register" className="dropdown-item" onClick={changeNav}>
+                    <Link
+                      to="/register"
+                      className="dropdown-item"
+                      onClick={changeNav}
+                    >
                       Register
                     </Link>
                   </li>
@@ -79,7 +104,11 @@ function Header() {
               <FontAwesomeIcon icon={["fas", "shopping-cart"]} />
               <span className="ms-3 badge rounded-pill bg-dark">0</span>
             </button>
-            <button className="navbar-toggler p-0 border-0 ms-3" type="button" onClick={toggleDrawer}>
+            <button
+              className="navbar-toggler p-0 border-0 ms-3"
+              type="button"
+              onClick={toggleDrawer}
+            >
               <span className="navbar-toggler-icon"></span>
             </button>
           </div>

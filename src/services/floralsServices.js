@@ -1,8 +1,9 @@
 import api from "../api/api";
+import apiNoCredentials from "../api/apiNoCredentials";
 
 const getFlorals = async () => {
   try {
-    const response = await api.get("/florals");
+    const response = await apiNoCredentials.get("/florals");
     return response.data;
   } catch (error) {
     console.error(
@@ -15,7 +16,7 @@ const getFlorals = async () => {
 
 const getFloralById = async (id) => {
   try {
-    const response = await api.get(`/florals/${id}`);
+    const response = await apiNoCredentials.get(`/florals/${id}`);
     return response.data;
   } catch (error) {
     console.error(
