@@ -1,4 +1,3 @@
-import Image from "../../nillkin-case-1.jpg";
 import RelatedProduct from "./RelatedProduct";
 import { Link } from "react-router-dom";
 import ScrollToTopOnMount from "../../template/ScrollToTopOnMount";
@@ -123,8 +122,9 @@ function ProductDetail() {
             <hr />
             <p className="lead flex-shrink-0">
               <small>
-Chúc mừng sinh nhật! Mong rằng mỗi cánh hoa trong bó hoa này sẽ mang đến cho bạn niềm vui, hạnh phúc và những điều tốt đẹp nhất.
- Chúc bạn một tuổi mới tràn đầy yêu thương và thành công!
+                Chúc mừng sinh nhật! Mong rằng mỗi cánh hoa trong bó hoa này sẽ
+                mang đến cho bạn niềm vui, hạnh phúc và những điều tốt đẹp nhất.
+                Chúc bạn một tuổi mới tràn đầy yêu thương và thành công!
               </small>
             </p>
           </div>

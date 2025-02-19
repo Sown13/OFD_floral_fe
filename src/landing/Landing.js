@@ -14,7 +14,7 @@ function Landing() {
       .getFlorals()
       .then((data) => {
         console.log("Dữ liệu sản phẩm nổi bật:", data);
-        setFlorals(data.slice(0, 6)); // Lấy 6 sản phẩm đầu tiên
+        setFlorals(data.slice(0, 6));
       })
       .catch((error) => console.error("Lỗi khi lấy dữ liệu:", error));
   }, []);

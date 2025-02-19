@@ -1,8 +1,9 @@
 import api from "../api/api";
+import apiNoCredentials from "../api/apiNoCredentials";
 
 const signUp = async (userData) => {
   try {
-    const response = await api.post("/signup", userData);
+    const response = await apiNoCredentials.post("/signup", userData);
     return response.data;
   } catch (error) {
     console.error("Sign Up Error:", error.response?.data || error.message);
@@ -12,7 +13,7 @@ const signUp = async (userData) => {
 
 const login = async (credentials) => {
   try {
-    const response = await api.post("/login", credentials);
+    const response = await apiNoCredentials.post("/login", credentials);
     const { token } = response.data;
 
     if (token) {

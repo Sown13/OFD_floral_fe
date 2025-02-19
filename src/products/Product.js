@@ -20,7 +20,9 @@ function Product() {
     <>
       {florals.map((floral, index) => {
         const isDiscounted = index < 2; // Giảm giá 15% cho 2 sản phẩm đầu tiên
-        const discountedPrice = isDiscounted ? floral.price * 0.85 : floral.price;
+        const discountedPrice = isDiscounted
+          ? floral.price * 0.85
+          : floral.price;
 
         return (
           <div className="col" key={floral._id}>

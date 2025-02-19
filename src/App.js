@@ -5,12 +5,15 @@ import Landing from "./landing/Landing";
 import ProductList from "./products/ProductList";
 import LoginForm from "./authen/LoginForm";
 import RegisterForm from "./authen/RegisterForm";
-
+import Cart from "./products/Cart";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
     <Template>
+      <ToastContainer />
       <Routes>
+        <Route path="/cart" element={<Cart />} />
         <Route path="/products" element={<ProductList />} />
         <Route path="/products/:slug" element={<ProductDetail />} />
         <Route path="/login" element={<LoginForm />} />

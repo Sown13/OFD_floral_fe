@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ScrollToTopOnMount from "../template/ScrollToTopOnMount";
 import floralsServices from "../services/floralsServices";
+import toastMessage from "../components/toastConfig";
 
 const categories = [
   "Hoa Mừng Sinh Nhật",
@@ -17,7 +18,12 @@ const categories = [
 
 const brands = ["Hoa Dân Tổ", "Hoa Gucci", "Hoa Dior", "Hoa YSL"];
 
-const manufacturers = ["Afriflora Sher (Ethiopia)", "Dümmen Orange (Hà Lan)", "Selecta One (Đức)", "Ball Horticultural (Mỹ)"];
+const manufacturers = [
+  "Afriflora Sher (Ethiopia)",
+  "Dümmen Orange (Hà Lan)",
+  "Selecta One (Đức)",
+  "Ball Horticultural (Mỹ)",
+];
 
 function FilterMenuLeft() {
   const [products, setproducts] = useState([]);
@@ -28,14 +34,18 @@ function FilterMenuLeft() {
       .getFlorals()
       .then((data) => {
         console.log("Dữ liệu nhận được từ API:", data);
-        console.log("Danh sách category nhận được:", data.map((item) => item.category));
-  
-        const uniqueCategories = [...new Set(data.map((item) => item.category))];
+        console.log(
+          "Danh sách category nhận được:",
+          data.map((item) => item.category)
+        );
+
+        const uniqueCategories = [
+          ...new Set(data.map((item) => item.category)),
+        ];
         setCategories(uniqueCategories);
       })
       .catch((error) => console.error("Lỗi khi lấy dữ liệu:", error));
   }, []);
-  
 
   return (
     <ul className="list-group list-group-flush rounded">
