@@ -1,12 +1,13 @@
 import api from "../api/api";
 import apiNoCredentials from "../api/apiNoCredentials";
+import toastMessage from "../components/toastConfig";
 
 const signUp = async (userData) => {
   try {
     const response = await apiNoCredentials.post("/signup", userData);
     return response.data;
   } catch (error) {
-    console.error("Sign Up Error:", error.response?.data || error.message);
+    toastMessage.error(error.message);
     throw error;
   }
 };
@@ -22,7 +23,7 @@ const login = async (credentials) => {
 
     return response.data;
   } catch (error) {
-    console.error("Login Error:", error.response?.data || error.message);
+    toastMessage.error(error.message);
     throw error;
   }
 };
@@ -31,9 +32,8 @@ const logout = async () => {
   try {
     await api.post("/logout");
   } catch (error) {
-    console.warn("Logout request failed, but clearing token anyway.");
+    toastMessage.error(error.message, "Clearing token anyway");
   }
-
   localStorage.removeItem("token");
   console.log("User logged out.");
 };
