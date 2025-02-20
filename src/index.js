@@ -15,9 +15,12 @@ library.add(fas, far, fab);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
+    //   <React.StrictMode>
+    //     <Router>
+    //       <App />
+    //     </Router>
+    //   </React.StrictMode>
     <Router>
-      <App />
+        <App />
     </Router>
-  </React.StrictMode>
 );
