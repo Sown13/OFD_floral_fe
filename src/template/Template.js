@@ -8,6 +8,7 @@ function Template() {
     return (
         <>
             <Header />
+            <ToastContainer />
             <Content />
             <Footer />
         </>

@@ -1,5 +1,5 @@
 import api from "../api/api";
-import toastMessage from "../components/toastConfig";
+import toastMessage from "../components/Toast";
 
 const getFlorals = async (page, limit, search) => {
     try {

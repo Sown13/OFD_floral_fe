@@ -6,6 +6,7 @@ import ProductDetail from "./products/detail/ProductDetail";
 import LoginForm from "./authen/LoginForm";
 import RegisterForm from "./authen/RegisterForm";
 import Landing from "./landing/Landing";
+import ProtectedRoute from "./config/ProtectedRoute";
 
 function App() {
     return (

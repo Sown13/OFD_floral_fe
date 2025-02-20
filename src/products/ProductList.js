@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ScrollToTopOnMount from "../template/ScrollToTopOnMount";
 import floralsServices from "../services/floralsServices";
+import Paginate from "../components/Pagination";
 
 const categories = [
     "Hoa Mừng Sinh Nhật",
@@ -107,13 +108,20 @@ function FilterMenuLeft() {
 
 function ProductList() {
     const [viewType, setViewType] = useState({ grid: true });
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
     const [florals, setFlorals] = useState([]);
 
     useEffect(() => {
-        floralsServices.getFlorals().then((data) => {
-            setFlorals(data.data);
+        floralsServices.getFlorals({ page: currentPage }).then((response) => {
+            setFlorals(response.data);
+            setTotalPages(response.data.metaData?.totalPages || 1);
         });
-    }, []);
+    }, [currentPage]);
+
+    const handlePageChange = (selectedPage) => {
+        setCurrentPage(selectedPage);
+    };
 
     function changeViewType() {
         setViewType({
@@ -236,7 +244,7 @@ function ProductList() {
                         </div>
                         <div
                             className={
-                                "row row-cols-1 row-cols-md-2 row-cols-lg-2 g-3 mb-4 flex-shrink-0 " +
+                                "row g-3 mb-4 flex-grow-1 " +
                                 (viewType.grid ? "row-cols-xl-3" : "row-cols-xl-2")
                             }
                         >
@@ -259,39 +267,12 @@ function ProductList() {
                                 );
                             })}
                         </div>
-                        <div className="d-flex align-items-center mt-auto">
-                            <span className="text-muted small d-none d-md-inline">
-                                Showing 10 of 100
-                            </span>
-                            <nav aria-label="Page navigation example" className="ms-auto">
-                                <ul className="pagination my-0">
-                                    <li className="page-item">
-                                        <a className="page-link" href="!#">
-                                            Previous
-                                        </a>
-                                    </li>
-                                    <li className="page-item">
-                                        <a className="page-link" href="!#">
-                                            1
-                                        </a>
-                                    </li>
-                                    <li className="page-item active">
-                                        <a className="page-link" href="!#">
-                                            2
-                                        </a>
-                                    </li>
-                                    <li className="page-item">
-                                        <a className="page-link" href="!#">
-                                            3
-                                        </a>
-                                    </li>
-                                    <li className="page-item">
-                                        <a className="page-link" href="!#">
-                                            Next
-                                        </a>
-                                    </li>
-                                </ul>
-                            </nav>
+                        <div className="mt-auto">
+                            <Paginate
+                                onPageChange={handlePageChange}
+                                totalPages={florals.metaData?.totalPages}
+                                currentPage={currentPage}
+                            />
                         </div>
                     </div>
                 </div>
