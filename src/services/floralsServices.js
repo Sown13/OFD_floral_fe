@@ -14,12 +14,12 @@ const getFlorals = async (page, limit, search) => {
 
 const getFloralById = async (id) => {
     try {
-        const response = await api.get(`/florals/${id}`);
-        return response.data;
+      const response = await api.get(`/florals/${id}`);
+      return response.data;
     } catch (error) {
-        toastMessage.error(error.message);
+      toastMessage.error(error.message);
     }
-};
+  };
 
 const createFloral = async (floralData) => {
     try {

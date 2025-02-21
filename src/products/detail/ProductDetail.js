@@ -1,146 +1,117 @@
+import React, { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import floralsServices from "../../services/floralsServices";
 import RelatedProduct from "./RelatedProduct";
-import { Link } from "react-router-dom";
 import ScrollToTopOnMount from "../../template/ScrollToTopOnMount";
 
 function ProductDetail() {
+  const { id } = useParams(); 
+  const [floral, setFloral] = useState(null); 
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    floralsServices
+      .getFloralById(id) 
+      .then((data) => {
+        setFloral(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Lỗi khi lấy dữ liệu sản phẩm:", error);
+        setLoading(false);
+      });
+  }, [id]);
+
+  if (loading) {
+    return <div className="container mt-5">Đang tải dữ liệu...</div>;
+  }
+
+  if (!floral) {
+    return <div className="container mt-5">Không tìm thấy sản phẩm.</div>;
+  }
+
   return (
     <div className="container mt-5 py-4 px-xl-5">
       <ScrollToTopOnMount />
       <nav aria-label="breadcrumb" className="bg-custom-light rounded mb-4">
         <ol className="breadcrumb p-3">
           <li className="breadcrumb-item">
-            <Link
-              className="text-decoration-none link-secondary"
-              to="/products"
-            >
-              All Prodcuts
+            <Link className="text-decoration-none link-secondary" to="/products">
+              Tất cả sản phẩm
             </Link>
           </li>
-          <li className="breadcrumb-item">
-            <a className="text-decoration-none link-secondary" href="!#">
-              Cases &amp; Covers
-            </a>
-          </li>
           <li className="breadcrumb-item active" aria-current="page">
-            Detail Product
+            {floral.name}
           </li>
         </ol>
       </nav>
+
       <div className="row mb-4">
-        <div className="d-none d-lg-block col-lg-1">
-          <div className="image-vertical-scroller">
-            <div className="d-flex flex-column">
-              {Array.from({ length: 10 }, (_, i) => {
-                let selected = i !== 1 ? "opacity-6" : "";
-                return (
-                  <a key={i} href="!#">
-                    <img
-                      className={"rounded mb-2 ratio " + selected}
-                      alt="Hoa Mừng Sinh Nhật"
-                      src="/images/hoasinhnhat/hoasinhnhat1.jpg"
-                    />
-                  </a>
-                );
-              })}
-            </div>
-          </div>
-        </div>
         <div className="col-lg-6">
-          <div className="row">
-            <div className="col-12 mb-4">
+          <img
+            className="border rounded ratio ratio-1x1"
+            alt={floral.name}
+            src={floral.images}
+          />
+          <div className="d-flex flex-nowrap mt-3" style={{ overflowX: "scroll" }}>
+            {floral.images.map((img, index) => (
               <img
-                className="border rounded ratio ratio-1x1"
-                alt="Hoa Mừng Sinh Nhật"
-                src="/images/hoasinhnhat/hoasinhnhat1.jpg"
+                key={index}
+                className="cover rounded me-2"
+                width="70"
+                height="70"
+                src={img}
+                alt={floral.name}
               />
-            </div>
-          </div>
-
-          <div className="row mt-2">
-            <div className="col-12">
-              <div
-                className="d-flex flex-nowrap"
-                style={{ overflowX: "scroll" }}
-              >
-                {Array.from({ length: 8 }, (_, i) => {
-                  return (
-                    <a key={i} href="!#">
-                      <img
-                        className="cover rounded mb-2 me-2"
-                        width="70"
-                        height="70"
-                        alt="Hoa Mừng Sinh Nhật"
-                        src="/images/hoasinhnhat/hoasinhnhat1.jpg"
-                      />
-                    </a>
-                  );
-                })}
-              </div>
-            </div>
+            ))}
           </div>
         </div>
 
+        {/* Thông tin sản phẩm */}
         <div className="col-lg-5">
-          <div className="d-flex flex-column h-100">
-            <h2 className="mb-1"> Hoa Mừng Sinh Nhật</h2>
-            <h4 className="text-muted mb-4">10000 VND</h4>
+          <h2 className="mb-1">{floral.name}</h2>
+          <h4 className="text-muted mb-4">{floral.price.toLocaleString()} VND</h4>
 
-            <div className="row g-3 mb-4">
-              <div className="col">
-                <button className="btn btn-outline-dark py-2 w-100">
-                  Add to cart
-                </button>
-              </div>
-              <div className="col">
-                <button className="btn btn-dark py-2 w-100">Buy now</button>
-              </div>
+          <div className="row g-3 mb-4">
+            <div className="col">
+              <button className="btn btn-outline-dark py-2 w-100">Thêm vào giỏ</button>
             </div>
-
-            <h4 className="mb-0">Details</h4>
-            <hr />
-            <dl className="row">
-              {/* <dt className="col-sm-4">Code</dt>
-              <dd className="col-sm-8 mb-3">C0001</dd> */}
-
-              <dt className="col-sm-4">Loại Hoa</dt>
-              <dd className="col-sm-8 mb-3">Cases & Covers</dd>
-
-              <dt className="col-sm-4">Nhãn Hàng</dt>
-              <dd className="col-sm-8 mb-3">Hoa Gucci</dd>
-
-              <dt className="col-sm-4">Nơi sản xuất</dt>
-              <dd className="col-sm-8 mb-3">Dümmen Orange (Hà Lan)</dd>
-
-              <dt className="col-sm-4">Màu sắc</dt>
-              <dd className="col-sm-8 mb-3">Red, Pink</dd>
-
-              <dt className="col-sm-4">Trạng Thái</dt>
-              <dd className="col-sm-8 mb-3">Còn Hàng</dd>
-            </dl>
-
-            <h4 className="mb-0">🌸 Lời chúc</h4>
-            <hr />
-            <p className="lead flex-shrink-0">
-              <small>
-                Chúc mừng sinh nhật! Mong rằng mỗi cánh hoa trong bó hoa này sẽ
-                mang đến cho bạn niềm vui, hạnh phúc và những điều tốt đẹp nhất.
-                Chúc bạn một tuổi mới tràn đầy yêu thương và thành công!
-              </small>
-            </p>
+            <div className="col">
+              <button className="btn btn-dark py-2 w-100">Mua ngay</button>
+            </div>
           </div>
+
+          <h4 className="mb-0">Chi tiết sản phẩm</h4>
+          <hr />
+          <dl className="row">
+            <dt className="col-sm-4">Loại Hoa</dt>
+            <dd className="col-sm-8 mb-3">{floral.category.join(", ")}</dd>
+
+            <dt className="col-sm-4">Màu sắc</dt>
+            <dd className="col-sm-8 mb-3">{floral.color || "Chưa cập nhật"}</dd>
+
+            <dt className="col-sm-4">Trạng thái</dt>
+            <dd className="col-sm-8 mb-3">{floral.status}</dd>
+
+            <dt className="col-sm-4">Số lượng</dt>
+            <dd className="col-sm-8 mb-3">{floral.quantity}</dd>
+          </dl>
+
+          <h4 className="mb-0">🌸 Mô tả</h4>
+          <hr />
+          <p className="lead">{floral.description }</p>
         </div>
       </div>
 
+      {/* Sản phẩm liên quan */}
       <div className="row">
         <div className="col-md-12 mb-4">
           <hr />
-          <h4 className="text-muted my-4">Related products</h4>
+          <h4 className="text-muted my-4">Sản phẩm liên quan</h4>
           <div className="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-3">
-            {Array.from({ length: 4 }, (_, i) => {
-              return (
-                <RelatedProduct key={i} percentOff={i % 2 === 0 ? 15 : null} />
-              );
-            })}
+            {[...Array(4)].map((_, i) => (
+              <RelatedProduct key={i} percentOff={i % 2 === 0 ? 15 : null} />
+            ))}
           </div>
         </div>
       </div>

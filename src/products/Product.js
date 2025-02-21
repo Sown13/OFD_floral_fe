@@ -23,7 +23,7 @@ function Product({ percentOff = 15 }) {
   return (
     <>
       {florals.map((floral, index) => {
-        const isDiscounted = index < 2; // Giảm giá 15% cho 2 sản phẩm đầu tiên
+        const isDiscounted = index < 0; // Giảm giá 15% cho 2 sản phẩm đầu tiên
         const discountedPrice = isDiscounted
           ? floral.price * (1 - percentOff / 100)
           : floral.price;
@@ -31,7 +31,8 @@ function Product({ percentOff = 15 }) {
         return (
           <div className="col" key={floral._id}>
             <div className="card shadow-sm">
-              <Link to={`/products/${floral._id}`} replace>
+              {/* Điều hướng đến chi tiết sản phẩm */}
+              <Link to={`/products/${floral._id}`}>
                 {isDiscounted && (
                   <div
                     className="badge bg-danger py-2 text-white position-absolute"
@@ -66,7 +67,7 @@ function Product({ percentOff = 15 }) {
                 </p>
                 <div className="d-grid d-block">
                   <button className="btn btn-outline-dark mt-3">
-                    <FontAwesomeIcon icon={["fas", "cart-plus"]} /> Add to cart
+                    <FontAwesomeIcon icon={["fas", "cart-plus"]} /> Thêm vào giỏ
                   </button>
                 </div>
               </div>

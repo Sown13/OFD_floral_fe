@@ -14,7 +14,7 @@ function App() {
             <Route path="/" element={<Template />}>
                 <Route index element={<Landing />} />
                 <Route path="products" element={<ProductList />} />
-                <Route path="products/:slug" element={<ProductDetail />} />
+                <Route path="products/:id" element={<ProductDetail />} />
                 <Route path="login" element={<LoginForm />} />
                 <Route path="register" element={<RegisterForm />} />
                 <Route element={<ProtectedRoute />}>
