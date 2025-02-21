@@ -1,18 +1,17 @@
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import floralsServices from "../services/floralsServices";
-import { useEffect, useState } from "react";
 
-function Product() {
+function Product({ percentOff = 15 }) {
   const [florals, setFlorals] = useState([]);
 
   useEffect(() => {
     floralsServices
       .getFlorals()
       .then((data) => {
-        console.log("Dữ liệu nhận được từ API:", data);
         if (Array.isArray(data.data)) {
-          setFlorals(data.data); 
+          setFlorals(data.data);
         } else {
           console.error("Dữ liệu không phải là mảng!", data);
           setFlorals([]);
@@ -26,7 +25,7 @@ function Product() {
       {florals.map((floral, index) => {
         const isDiscounted = index < 2; // Giảm giá 15% cho 2 sản phẩm đầu tiên
         const discountedPrice = isDiscounted
-          ? floral.price * 0.85
+          ? floral.price * (1 - percentOff / 100)
           : floral.price;
 
         return (
@@ -38,10 +37,9 @@ function Product() {
                     className="badge bg-danger py-2 text-white position-absolute"
                     style={{ top: "0.5rem", right: "0.5rem" }}
                   >
-                    15% OFF
+                    {percentOff}% OFF
                   </div>
                 )}
-
                 <img
                   className="card-img-top bg-dark"
                   style={{ objectFit: "cover" }}
