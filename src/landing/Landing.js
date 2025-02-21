@@ -10,14 +10,19 @@ function Landing() {
   const [florals, setFlorals] = useState([]);
 
   useEffect(() => {
-    floralsServices
-      .getFlorals()
-      .then((data) => {
-        console.log("Dữ liệu sản phẩm nổi bật:", data);
-        setFlorals(data.slice(0, 6));
-      })
-      .catch((error) => console.error("Lỗi khi lấy dữ liệu:", error));
-  }, []);
+  floralsServices
+    .getFlorals()
+    .then((data) => {
+      console.log("Dữ liệu nhận được từ API:", data);
+      if (Array.isArray(data.data)) {
+        setFlorals(data.data.slice(0, 6));
+      } else {
+        console.error("Dữ liệu không phải là mảng!", data);
+        setFlorals([]);
+      }
+    })
+    .catch((error) => console.error("Lỗi khi lấy dữ liệu:", error));
+}, []);
 
   return (
     <>

@@ -11,7 +11,12 @@ function Product() {
       .getFlorals()
       .then((data) => {
         console.log("Dữ liệu nhận được từ API:", data);
-        setFlorals(data);
+        if (Array.isArray(data.data)) {
+          setFlorals(data.data); 
+        } else {
+          console.error("Dữ liệu không phải là mảng!", data);
+          setFlorals([]);
+        }
       })
       .catch((error) => console.error("Lỗi khi lấy dữ liệu:", error));
   }, []);
