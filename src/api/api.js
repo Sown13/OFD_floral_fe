@@ -1,6 +1,7 @@
 import axios from "axios";
 import authenServices from "../services/authenServices";
 import toastMessage from "../components/Toast";
+import { logout } from "../services/authenServices";
 
 const api = axios.create({
     baseURL: "http://localhost:8080/api/v1",

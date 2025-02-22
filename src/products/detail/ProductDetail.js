@@ -51,7 +51,7 @@ function ProductDetail() {
           <img
             className="border rounded ratio ratio-1x1"
             alt={floral.name}
-            src={floral.images}
+            src={floral.cover}
           />
           <div className="d-flex flex-nowrap mt-3" style={{ overflowX: "scroll" }}>
             {floral.images.map((img, index) => (

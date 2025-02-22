@@ -28,7 +28,7 @@ function Product({ floral, index, percentOff = 15 }) {
                         style={{ objectFit: "cover" }}
                         height="240"
                         alt={floral.name}
-                        src={floral.images?.[0] || "fallback-image-url.jpg"}
+                        src={floral.cover}
                     />
                 </Link>
                 <div className="card-body">
