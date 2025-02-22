@@ -1,8 +1,8 @@
 import axios from "axios";
-import { logout } from "./authService";
+import { logout } from "../services/authenServices";
 
 const api = axios.create({
-  baseURL: "https://your-api-url.com/api/v1",
+  baseURL: "http://localhost:8080",
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
