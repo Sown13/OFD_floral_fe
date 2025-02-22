@@ -18,7 +18,6 @@ api.interceptors.request.use(
             config.url.startsWith("/florals")
         ) {
             if (!token) {
-                toastMessage.error("Bạn chưa đăng nhập.");
                 return Promise.reject(new Error("Unauthorized: No token found"));
             }
             config.headers.Authorization = `Bearer ${token}`;

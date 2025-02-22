@@ -116,10 +116,15 @@ function ProductList() {
     const [decodedToken, setDecodedToken] = useState(null);
 
     const loadData = useCallback(async () => {
-        const response = await floralsServices.getFlorals(currentPage, 10);
-        setFlorals(response.data);
-        setTotalPages(response.data.metaData?.totalPages || 1);
+        floralsServices.getFlorals(currentPage, 10).then((data) => {
+            setFlorals(data.data);
+            setTotalPages(data.metaData?.totalPages || 1);
+        });
     }, [currentPage]);
+
+    useEffect(() => {
+        loadData();
+    }, [loadData]);
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -133,10 +138,6 @@ function ProductList() {
             }
         }
     }, []);
-
-    useEffect(() => {
-        loadData();
-    }, [loadData]);
 
     const handlePageChange = (selectedPage) => {
         setCurrentPage(selectedPage);
@@ -348,7 +349,7 @@ function ProductList() {
                                 (viewType.grid ? "row-cols-xl-3" : "row-cols-xl-2")
                             }
                         >
-                            {florals ??
+                            {florals &&
                                 florals.map((floral, i) => {
                                     if (viewType.grid) {
                                         return (
@@ -361,7 +362,7 @@ function ProductList() {
                                     }
                                     return (
                                         <ProductH
-                                            key={floral.id || i}
+                                            key={floral._id || i}
                                             floral={floral}
                                             percentOff={i % 4 === 0 ? 15 : null}
                                         />
