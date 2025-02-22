@@ -46,7 +46,7 @@ function Product({ percentOff = 15 }) {
                   style={{ objectFit: "cover" }}
                   height="240"
                   alt={floral.name}
-                  src={floral.images}
+                  src={floral.cover}
                 />
               </Link>
               <div className="card-body">
