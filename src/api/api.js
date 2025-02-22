@@ -1,7 +1,4 @@
 import axios from "axios";
-import authenServices from "../services/authenServices";
-import toastMessage from "../components/Toast";
-import { logout } from "../services/authenServices";
 
 const api = axios.create({
     baseURL: "http://localhost:8080/api/v1",
@@ -13,7 +10,7 @@ const api = axios.create({
 api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem("token");
-
+        config.headers.Authorization = `Bearer ${token}`;
         if (
             ["post", "put", "delete"].includes(config.method) &&
             config.url.startsWith("/florals")
@@ -33,10 +30,6 @@ api.interceptors.request.use(
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response?.status === 401) {
-            authenServices.logout();
-            window.location.href = "/login";
-        }
         return Promise.reject(error);
     }
 );

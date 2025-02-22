@@ -10,16 +10,20 @@ const signUp = async (userData) => {
     }
 };
 
-const login = async (credentials) => {
+const login = async (credentials, navigate) => {
     try {
         const response = await api.post("/login", credentials);
         const { token } = response.data;
+
         if (token) {
             localStorage.setItem("token", token);
+            toastMessage.success("Đăng nhập thành công!");
+            const redirectPath = localStorage.getItem("redirectAfterLogin") || "/dashboard";
+            localStorage.removeItem("redirectAfterLogin");
+            navigate(redirectPath);
         }
-        return response.data;
     } catch (error) {
-        toastMessage.error(error.message);
+        toastMessage.error(error.response?.data?.message || "Đăng nhập thất bại");
     }
 };
 
