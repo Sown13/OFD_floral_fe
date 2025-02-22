@@ -30,7 +30,6 @@ const logout = async () => {
         toastMessage.error(error.message, "Clearing token anyway");
     }
     localStorage.removeItem("token");
-    console.log("User logged out.");
 };
 
 const authenServices = {

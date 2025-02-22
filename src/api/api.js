@@ -1,5 +1,6 @@
 import axios from "axios";
 import authenServices from "../services/authenServices";
+import toastMessage from "../components/Toast";
 
 const api = axios.create({
     baseURL: "http://localhost:8080/api/v1",
@@ -7,8 +8,6 @@ const api = axios.create({
         "Content-Type": "application/json",
     },
 });
-
-const protectedEndpoints = ["/florals", "/login", "/signup"];
 
 api.interceptors.request.use(
     (config) => {
@@ -19,7 +18,8 @@ api.interceptors.request.use(
             config.url.startsWith("/florals")
         ) {
             if (!token) {
-                window.location.href = "/login";
+                toastMessage.error("Bạn chưa đăng nhập.");
+                return Promise.reject(new Error("Unauthorized: No token found"));
             }
             config.headers.Authorization = `Bearer ${token}`;
         }
