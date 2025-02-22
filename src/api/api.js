@@ -18,6 +18,7 @@ api.interceptors.request.use(
             config.url.startsWith("/florals")
         ) {
             if (!token) {
+                window.location.href = "/login";
                 return Promise.reject(new Error("Unauthorized: No token found"));
             }
             config.headers.Authorization = `Bearer ${token}`;
