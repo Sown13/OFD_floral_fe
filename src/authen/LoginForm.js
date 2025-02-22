@@ -1,15 +1,40 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import api from "../api/api";
+import { useNavigate } from "react-router-dom";
 
 function LoginForm() {
-  const [email, setEmail] = useState("");
+  const navigate = useNavigate();
+  const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    console.log({ email, password, rememberMe });
+    try {
+      const response = await api.post('/users/login', { username, password });
+  
+      // console.log("Response data:", response.data);
+  
+      const { accessToken, refreshToken } = response.data;
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+  
+      alert("Login successful");
+      navigate("/products");
+    } catch (error) {
+      if (error.response) {
+        console.log("Error response:", error.response.data);
+        alert(error.response.data.message || "Login failed");
+        return; 
+      } else {
+        console.error("Error:", error);
+        alert("Something went wrong");
+        return; 
+      }
+    }
   };
+  
 
   return (
     <div className="container d-flex justify-content-center align-items-center vh-100">
@@ -17,14 +42,14 @@ function LoginForm() {
         <h3 className="text-center text-primary">Login</h3>
         <form onSubmit={handleLogin}>
           <div className="mb-3">
-            <label className="form-label">Email</label>
+            <label className="form-label">Username</label>
             <input
-              type="email"
+              type="text"
               className="form-control"
-              placeholder="Enter email"
+              placeholder="Enter username"
               required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={username}
+              onChange={(e) => setUserName(e.target.value)}
             />
           </div>
           <div className="mb-3">
