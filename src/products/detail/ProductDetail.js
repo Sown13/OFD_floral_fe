@@ -104,7 +104,7 @@ function ProductDetail() {
       </div>
 
       {/* Sản phẩm liên quan */}
-      <div className="row">
+      {/* <div className="row">
         <div className="col-md-12 mb-4">
           <hr />
           <h4 className="text-muted my-4">Sản phẩm liên quan</h4>
@@ -114,7 +114,7 @@ function ProductDetail() {
             ))}
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
