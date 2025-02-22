@@ -1,11 +1,13 @@
 import { Link } from "react-router-dom";
 import Product from "./Product";
 import ProductH from "./ProductH";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ScrollToTopOnMount from "../template/ScrollToTopOnMount";
 import floralsServices from "../services/floralsServices";
 import Paginate from "../components/Pagination";
+import { jwtDecode } from "jwt-decode";
+import toastMessage from "../components/Toast";
 
 const categories = [
     "Hoa Mừng Sinh Nhật",
@@ -111,13 +113,30 @@ function ProductList() {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [florals, setFlorals] = useState([]);
+    const [decodedToken, setDecodedToken] = useState(null);
+
+    const loadData = useCallback(async () => {
+        const response = await floralsServices.getFlorals(currentPage);
+        setFlorals(response.data);
+        setTotalPages(response.data.metaData?.totalPages || 1);
+    }, [currentPage]);
 
     useEffect(() => {
-        floralsServices.getFlorals({ page: currentPage }).then((response) => {
-            setFlorals(response.data);
-            setTotalPages(response.data.metaData?.totalPages || 1);
-        });
-    }, [currentPage]);
+        const token = localStorage.getItem("token");
+        if (token) {
+            try {
+                const decoded = jwtDecode(token);
+                setDecodedToken(decoded);
+            } catch (error) {
+                console.error("Invalid token:", error);
+                setDecodedToken(null);
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        loadData();
+    }, [loadData]);
 
     const handlePageChange = (selectedPage) => {
         setCurrentPage(selectedPage);
@@ -128,6 +147,47 @@ function ProductList() {
             grid: !viewType.grid,
         });
     }
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        const form = e.target;
+        const formData = new FormData(form);
+
+        const request = {
+            name: formData.get("name"),
+            price: Number(formData.get("price")),
+            category: formData.get("category"),
+            cover: formData.get("cover"),
+            images: formData.get("images"),
+        };
+
+        if (!request.name) {
+            toastMessage.error("Flower name is required");
+            return;
+        }
+        if (!request.price) {
+            toastMessage.error("Price is required");
+            return;
+        }
+        if (!request.category) {
+            toastMessage.error("Category is required");
+            return;
+        }
+        if (!request.cover) {
+            toastMessage.error("Cover image URL is required");
+            return;
+        }
+        if (!request.images) {
+            toastMessage.error("At least one image URL is required");
+            return;
+        }
+
+        floralsServices.createFloral(request).then((response) => {
+            console.log(response);
+            loadData();
+        });
+    };
 
     return (
         <div className="container mt-5 py-4 px-xl-5">
@@ -240,6 +300,26 @@ function ProductList() {
                                         icon={["fas", viewType.grid ? "th-list" : "th-large"]}
                                     />
                                 </button>
+                                {/* {decodedToken && decodedToken.role === "admin" && (
+                                    <button
+                                        className="btn btn-outline-dark ms-2 d-none d-lg-inline"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#addFlower"
+                                    >
+                                        <FontAwesomeIcon
+                                            icon={["fas", viewType.grid ? "plus" : "th-large"]}
+                                        />
+                                    </button>
+                                )} */}
+                                <button
+                                    className="btn btn-outline-dark ms-2 d-none d-lg-inline"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#addFlower"
+                                >
+                                    <FontAwesomeIcon
+                                        icon={["fas", viewType.grid ? "plus" : "th-large"]}
+                                    />
+                                </button>
                             </div>
                         </div>
                         <div
@@ -248,31 +328,101 @@ function ProductList() {
                                 (viewType.grid ? "row-cols-xl-3" : "row-cols-xl-2")
                             }
                         >
-                            {florals.map((floral, i) => {
-                                if (viewType.grid) {
+                            {florals ??
+                                florals.map((floral, i) => {
+                                    if (viewType.grid) {
+                                        return (
+                                            <Product
+                                                key={floral._id}
+                                                floral={floral}
+                                                percentOff={i < 2 ? 15 : null}
+                                            />
+                                        );
+                                    }
                                     return (
-                                        <Product
-                                            key={floral._id}
+                                        <ProductH
+                                            key={floral.id || i}
                                             floral={floral}
-                                            percentOff={i < 2 ? 15 : null}
+                                            percentOff={i % 4 === 0 ? 15 : null}
                                         />
                                     );
-                                }
-                                return (
-                                    <ProductH
-                                        key={floral.id || i}
-                                        floral={floral}
-                                        percentOff={i % 4 === 0 ? 15 : null}
-                                    />
-                                );
-                            })}
+                                })}
                         </div>
                         <div className="mt-auto">
                             <Paginate
                                 onPageChange={handlePageChange}
-                                totalPages={florals.metaData?.totalPages}
+                                totalPages={totalPages}
                                 currentPage={currentPage}
                             />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="modal fade" id="addFlower" tabIndex="-1">
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title">Thêm mới</h5>
+                            <button
+                                type="button"
+                                className="btn btn-danger"
+                                data-bs-dismiss="modal"
+                            >
+                                X
+                            </button>
+                        </div>
+                        <div className="modal-body">
+                            <form onSubmit={handleSubmit}>
+                                <div className="mb-3">
+                                    <label className="form-label">Tên</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        name="name"
+                                        required
+                                    />
+                                </div>
+                                <div className="mb-3">
+                                    <label className="form-label">Giá cả</label>
+                                    <input
+                                        type="number"
+                                        className="form-control"
+                                        name="price"
+                                        required
+                                    />
+                                </div>
+                                <div className="mb-3">
+                                    <label className="form-label">Phân loại</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        name="category"
+                                        required
+                                    />
+                                </div>
+                                <div className="mb-3">
+                                    <label className="form-label">Bìa</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        name="cover"
+                                        required
+                                    />
+                                </div>
+                                <div className="mb-3">
+                                    <label className="form-label">Hình ảnh</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        name="cover"
+                                        required
+                                    />
+                                </div>
+                                <button type="submit" className="btn btn-primary">
+                                    Add Flower
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>

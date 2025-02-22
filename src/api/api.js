@@ -8,8 +8,6 @@ const api = axios.create({
     },
 });
 
-const protectedEndpoints = ["/florals", "/login", "/signup"];
-
 api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem("token");
