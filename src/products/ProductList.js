@@ -7,23 +7,6 @@ import ScrollToTopOnMount from "../template/ScrollToTopOnMount";
 import floralsServices from "../services/floralsServices";
 import Paginate from "../components/Pagination";
 
-const categories = [
-    "Hoa Mừng Sinh Nhật",
-    "Hoa Hồng Đỏ",
-    "Hoa Ngày 8/3",
-    "Hoa Khai Chương",
-    "Hoa Cưới",
-    "Hoa Đẹp",
-];
-
-const brands = ["Hoa Dân Tổ", "Hoa Gucci", "Hoa Dior", "Hoa YSL"];
-
-const manufacturers = [
-    "Afriflora Sher (Ethiopia)",
-    "Dümmen Orange (Hà Lan)",
-    "Selecta One (Đức)",
-    "Ball Horticultural (Mỹ)",
-];
 
 function FilterMenuLeft() {
     const [products, setproducts] = useState([]);
@@ -48,7 +31,7 @@ function FilterMenuLeft() {
                     })}
                 </div>
             </li>
-            <li className="list-group-item">
+            {/* <li className="list-group-item">
                 <h5 className="mt-1 mb-1">Nhãn Hàng</h5>
                 <div className="d-flex flex-column">
                     {brands.map((v, i) => {
@@ -77,7 +60,7 @@ function FilterMenuLeft() {
                         );
                     })}
                 </div>
-            </li>
+            </li> */}
             <li className="list-group-item">
                 <h5 className="mt-1 mb-2">Chọn Giá</h5>
                 <div className="d-grid d-block mb-3">
@@ -105,6 +88,8 @@ function FilterMenuLeft() {
         </ul>
     );
 }
+
+const categories = ["Hoa Sinh Nhật", "Hoa Cưới", "Hoa Khai Trương", "Hoa Chúc Mừng"];
 
 function ProductList() {
     const [viewType, setViewType] = useState({ grid: true });
