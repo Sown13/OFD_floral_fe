@@ -19,11 +19,11 @@ function RegisterForm() {
       return;
     }
     try {
-      const response = await api.post('/users/signup', {firstName, lastName, username, password, email, phone});
+      const response = await api.post('/users/signup', { firstName, lastName, username, password, email, phone });
       console.log("register successfull", response.data);
       alert("Register Successfull");
     } catch (error) {
-      if(error.response) {
+      if (error.response) {
         console.log("Error response:", error.response.data);
         alert(error.response.data.message || "Register Failed")
       } else {
@@ -39,31 +39,31 @@ function RegisterForm() {
         <h3 className="text-center text-success">Register</h3>
         <form onSubmit={handleRegister}>
 
-        <div className="row mb-2">
-  <div className="col-6">
-    <label className="form-label">First Name</label>
-    <input
-      type="text"
-      className="form-control"
-      placeholder="Enter First Name"
-      required
-      value={firstName}
-      onChange={(e) => setFirstName(e.target.value)}
-    />
-  </div>
+          <div className="row mb-2">
+            <div className="col-6">
+              <label className="form-label">First Name</label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Enter First Name"
+                required
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+              />
+            </div>
 
-  <div className="col-6">
-    <label className="form-label">Last Name</label>
-    <input
-      type="text"
-      className="form-control"
-      placeholder="Enter Last Name"
-      required
-      value={lastName}
-      onChange={(e) => setLastName(e.target.value)}
-    />
-  </div>
-</div>
+            <div className="col-6">
+              <label className="form-label">Last Name</label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Enter Last Name"
+                required
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+              />
+            </div>
+          </div>
 
 
           <div className="mb-3">
@@ -79,30 +79,30 @@ function RegisterForm() {
           </div>
 
           <div className="row mb-2">
-  <div className="col-6">
-    <label className="form-label">Email</label>
-    <input
-      type="email"
-      className="form-control"
-      placeholder="Enter email"
-      required
-      value={email}
-      onChange={(e) => setEmail(e.target.value)}
-    />
-  </div>
+            <div className="col-6">
+              <label className="form-label">Email</label>
+              <input
+                type="email"
+                className="form-control"
+                placeholder="Enter email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
 
-  <div className="col-6">
-    <label className="form-label">Phone</label>
-    <input
-      type="tel"
-      className="form-control"
-      placeholder="Enter phone"
-      required
-      value={phone}
-      onChange={(e) => setPhone(e.target.value)}
-    />
-  </div>
-</div>
+            <div className="col-6">
+              <label className="form-label">Phone</label>
+              <input
+                type="tel"
+                className="form-control"
+                placeholder="Enter phone"
+                required
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+              />
+            </div>
+          </div>
 
           <div className="mb-3">
             <label className="form-label">Password</label>

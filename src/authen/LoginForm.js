@@ -26,11 +26,10 @@ function LoginForm() {
       if (error.response) {
         console.log("Error response:", error.response.data);
         alert(error.response.data.message || "Login failed");
-        return; 
+        
       } else {
         console.error("Error:", error);
         alert("Something went wrong");
-        return; 
       }
     }
   };

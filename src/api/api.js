@@ -1,4 +1,6 @@
 import axios from "axios";
+import authenServices from "../services/authenServices";
+import toastMessage from "../components/Toast";
 import { logout } from "../services/authenServices";
 
 const api = axios.create({
@@ -10,30 +12,33 @@ const api = axios.create({
 });
 
 api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("token");
-    if (
-      token &&
-      !config.url.includes("/login") &&
-      !config.url.includes("/signup")
-    ) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
+    (config) => {
+        const token = localStorage.getItem("token");
+
+        if (
+            ["post", "put", "delete"].includes(config.method) &&
+            config.url.startsWith("/florals")
+        ) {
+            if (!token) {
+                return Promise.reject(new Error("Unauthorized: No token found"));
+            }
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+
+        return config;
+    },
+    (error) => Promise.reject(error)
 );
 
 api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      console.warn("Unauthorized! Logging out...");
-      logout();
-      window.location.href = "/login";
+    (response) => response,
+    (error) => {
+        if (error.response?.status === 401) {
+            authenServices.logout();
+            window.location.href = "/login";
+        }
+        return Promise.reject(error);
     }
-    return Promise.reject(error);
-  }
 );
 
 export default api;

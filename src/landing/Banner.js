@@ -52,7 +52,7 @@ function Banner() {
           <div
             key={banner.id}
             className={`carousel-item ${index === activeIndex ? "active" : ""}`}
-            data-bs-interval="5000"
+            data-bs-interval="2000"
           >
             <div
               className="ratio"

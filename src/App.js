@@ -1,24 +1,28 @@
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Template from "./template/Template";
-import ProductDetail from "./products/detail/ProductDetail";
-import { Routes, Route } from "react-router-dom";
-import Landing from "./landing/Landing";
+import Cart from "./products/Cart";
 import ProductList from "./products/ProductList";
+import ProductDetail from "./products/detail/ProductDetail";
 import LoginForm from "./authen/LoginForm";
 import RegisterForm from "./authen/RegisterForm";
-
+import Landing from "./landing/Landing";
+import ProtectedRoute from "./config/ProtectedRoute";
 
 function App() {
-  return (
-    <Template>
-      <Routes>
-        <Route path="/products" element={<ProductList />} />
-        <Route path="/products/:slug" element={<ProductDetail />} />
-        <Route path="/login" element={<LoginForm />} />
-        <Route path="/register" element={<RegisterForm />} />
-        <Route path="/" element={<Landing />} />
-      </Routes>
-    </Template>
-  );
+    return (
+        <Routes>
+            <Route path="/" element={<Template />}>
+                <Route index element={<Landing />} />
+                <Route path="products" element={<ProductList />} />
+                <Route path="products/:id" element={<ProductDetail />} />
+                <Route path="login" element={<LoginForm />} />
+                <Route path="register" element={<RegisterForm />} />
+                <Route element={<ProtectedRoute />}>
+                    <Route path="cart" element={<Cart />} />
+                </Route>
+            </Route>
+        </Routes>
+    );
 }
 
 export default App;

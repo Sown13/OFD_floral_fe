@@ -1,38 +1,41 @@
 import api from "../api/api";
+import toastMessage from "../components/Toast";
 
-// export const signUp = async (userData) => {
-//   try {
-//     const response = await api.post("signup", userData);
-//     return response.data;
-//   } catch (error) {
-//     console.error("Sign Up Error:", error.response?.data || error.message);
-//     throw error;
-//   }
-// };
-
-// export const login = async (credentials) => {
-//   try {
-//     const response = await api.post("/login", credentials);
-//     const { token } = response.data;
-
-//     if (token) {
-//       localStorage.setItem("token", token);
-//     }
-
-//     return response.data;
-//   } catch (error) {
-//     console.error("Login Error:", error.response?.data || error.message);
-//     throw error;
-//   }
-// };
-
-export const logout = async () => {
-  try {
-    await api.post("/logout");
-  } catch (error) {
-    console.warn("Logout request failed, but clearing token anyway.");
-  }
-
-  localStorage.removeItem("acceccToken");
-  console.log("User logged out.");
+const signUp = async (userData) => {
+    try {
+        const response = await api.post("/signup", userData);
+        return response.data;
+    } catch (error) {
+        toastMessage.error(error.message);
+    }
 };
+
+const login = async (credentials) => {
+    try {
+        const response = await api.post("/login", credentials);
+        const { token } = response.data;
+        if (token) {
+            localStorage.setItem("token", token);
+        }
+        return response.data;
+    } catch (error) {
+        toastMessage.error(error.message);
+    }
+};
+
+const logout = async () => {
+    try {
+        await api.post("/logout");
+    } catch (error) {
+        toastMessage.error(error.message, "Clearing token anyway");
+    }
+    localStorage.removeItem("token");
+};
+
+const authenServices = {
+    signUp,
+    login,
+    logout,
+};
+
+export default authenServices;
