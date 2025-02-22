@@ -116,7 +116,7 @@ function ProductList() {
     const [decodedToken, setDecodedToken] = useState(null);
 
     const loadData = useCallback(async () => {
-        const response = await floralsServices.getFlorals(currentPage);
+        const response = await floralsServices.getFlorals(currentPage, 10);
         setFlorals(response.data);
         setTotalPages(response.data.metaData?.totalPages || 1);
     }, [currentPage]);
@@ -157,10 +157,30 @@ function ProductList() {
         const request = {
             name: formData.get("name"),
             price: Number(formData.get("price")),
-            category: formData.get("category"),
+            category:
+                formData
+                    .get("category")
+                    ?.split(",")
+                    .map((cat) => cat.trim()) || [],
             cover: formData.get("cover"),
-            images: formData.get("images"),
+            color: formData.get("color"),
+            images:
+                formData
+                    .get("images")
+                    ?.split(",")
+                    .map((img) => img.trim()) || [],
+            status: formData.get("status"),
+            description: formData.get("description"),
+            quantity: Number(formData.get("quantity")),
         };
+
+        // Validate fields
+        for (const key in request) {
+            if (!request[key] || (Array.isArray(request[key]) && request[key].length === 0)) {
+                toastMessage.error(`${key} is required`);
+                return;
+            }
+        }
 
         if (!request.name) {
             toastMessage.error("Flower name is required");
@@ -360,7 +380,7 @@ function ProductList() {
             </div>
 
             <div className="modal fade" id="addFlower" tabIndex="-1">
-                <div className="modal-dialog">
+                <div className="modal-dialog modal-lg">
                     <div className="modal-content">
                         <div className="modal-header">
                             <h5 className="modal-title">Thêm mới</h5>
@@ -374,54 +394,96 @@ function ProductList() {
                         </div>
                         <div className="modal-body">
                             <form onSubmit={handleSubmit}>
-                                <div className="mb-3">
-                                    <label className="form-label">Tên</label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        name="name"
-                                        required
-                                    />
+                                <div className="row">
+                                    <div className="col-md-6 mb-3">
+                                        <label className="form-label">Tên</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            name="name"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="col-md-6 mb-3">
+                                        <label className="form-label">Giá cả</label>
+                                        <input
+                                            type="number"
+                                            className="form-control"
+                                            name="price"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="col-md-6 mb-3">
+                                        <label className="form-label">Phân loại</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            name="category"
+                                            placeholder="VD: Hoa hồng, Hoa lan"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="col-md-6 mb-3">
+                                        <label className="form-label">Màu sắc</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            name="color"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="col-md-6 mb-3">
+                                        <label className="form-label">Bìa</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            name="cover"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="col-md-6 mb-3">
+                                        <label className="form-label">Hình ảnh</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            name="images"
+                                            placeholder="Nhập URL hình ảnh, cách nhau bằng dấu phẩy"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="col-md-6 mb-3">
+                                        <label className="form-label">Trạng thái</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            name="status"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="col-md-6 mb-3">
+                                        <label className="form-label">Số lượng</label>
+                                        <input
+                                            type="number"
+                                            className="form-control"
+                                            name="quantity"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="col-12 mb-3">
+                                        <label className="form-label">Mô tả</label>
+                                        <textarea
+                                            className="form-control"
+                                            name="description"
+                                            rows="4"
+                                            required
+                                        ></textarea>
+                                    </div>
+                                    <div className="col-12 text-end">
+                                        <button type="submit" className="btn btn-primary">
+                                            Lưu
+                                        </button>
+                                    </div>
                                 </div>
-                                <div className="mb-3">
-                                    <label className="form-label">Giá cả</label>
-                                    <input
-                                        type="number"
-                                        className="form-control"
-                                        name="price"
-                                        required
-                                    />
-                                </div>
-                                <div className="mb-3">
-                                    <label className="form-label">Phân loại</label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        name="category"
-                                        required
-                                    />
-                                </div>
-                                <div className="mb-3">
-                                    <label className="form-label">Bìa</label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        name="cover"
-                                        required
-                                    />
-                                </div>
-                                <div className="mb-3">
-                                    <label className="form-label">Hình ảnh</label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        name="cover"
-                                        required
-                                    />
-                                </div>
-                                <button type="submit" className="btn btn-primary">
-                                    Add Flower
-                                </button>
                             </form>
                         </div>
                     </div>
