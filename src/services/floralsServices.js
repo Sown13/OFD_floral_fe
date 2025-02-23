@@ -1,10 +1,14 @@
 import api from "../api/api";
 import toastMessage from "../components/Toast";
 
-const getFlorals = async (page, limit, search, category) => {
+const getFlorals = async (page, limit, search = "", filters = {}) => {
+    if (!page || !limit) {
+        toastMessage.error("Invalid request");
+        return;
+    }
     try {
         const response = await api.get("/florals", {
-            params: { page, limit, search, category },
+            params: { page, limit, search, ...filters },
         });
         return response.data;
     } catch (error) {
@@ -42,21 +46,30 @@ const createFloral = async (floralData) => {
 };
 
 const updateFloral = async (id, floralData) => {
-  try {
-    const response = await api.put(`/florals/${id}`, floralData);
-    return response.data;
-  } catch (error) {
-    toastMessage.error(error.message);
-  }
+    if (!id) {
+        toastMessage.error("Invalid ID");
+        return;
+    }
+    try {
+        const response = await api.put(`/florals/${id}`, floralData);
+        toastMessage.success("Update sản phẩm thành công");
+        return response.data;
+    } catch (error) {
+        toastMessage.error(error.message);
+    }
 };
 
 const deleteFloral = async (id) => {
-  try {
-    await api.delete(`/florals/${id}`);
-    console.log(`Floral with ID ${id} deleted.`);
-  } catch (error) {
-    toastMessage.error(error.message);
-  }
+    if (!id) {
+        toastMessage.error("Invalid ID");
+        return;
+    }
+    try {
+        await api.delete(`/florals/${id}`);
+        toastMessage.success("Xóa sản phẩm thành công");
+    } catch (error) {
+        toastMessage.error(error.message);
+    }
 };
 
 const floralsServices = {

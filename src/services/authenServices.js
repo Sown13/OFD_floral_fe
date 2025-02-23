@@ -12,24 +12,36 @@ const signUp = async (userData) => {
 
 const login = async (credentials) => {
     try {
-        const response = await api.post("/login", credentials);
-        const { token } = response.data;
-        if (token) {
-            localStorage.setItem("token", token);
+        const response = await api.post("/users/login", credentials);
+        if (response.data) {
+            const { accessToken, refreshToken } = response.data;
+            localStorage.setItem("token", accessToken);
+            localStorage.setItem("refreshToken", refreshToken);
+            toastMessage.success("Đăng nhập thành công!");
+            const redirectPath = localStorage.getItem("redirectAfterLogin") || "/";
+            localStorage.removeItem("redirectAfterLogin");
+            setTimeout(() => {
+                window.location.href = redirectPath;
+            }, 1000);
         }
-        return response.data;
     } catch (error) {
-        toastMessage.error(error.message);
+        toastMessage.error(error.response?.data?.message || "Đăng nhập thất bại");
     }
 };
 
 const logout = async () => {
+    const refreshToken = localStorage.getItem("refreshToken");
     try {
-        await api.post("/logout");
+        await api.post("/users/logout", { refreshToken: refreshToken });
+        toastMessage.info("Logout thành công");
+        localStorage.removeItem("token");
+        localStorage.removeItem("refreshToken");
+        setTimeout(() => {
+            window.location.href = "/login";
+        }, 800);
     } catch (error) {
-        toastMessage.error(error.message, "Clearing token anyway");
+        toastMessage.error(error.message);
     }
-    localStorage.removeItem("token");
 };
 
 const authenServices = {
