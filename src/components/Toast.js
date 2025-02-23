@@ -2,11 +2,11 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const toastConfig = {
-    autoClose: 3000,
+    autoClose: 2000,
     hideProgressBar: false,
     closeOnClick: true,
     pauseOnHover: true,
-    draggable: true,
+    draggable: false,
     theme: "light",
     className: "custom-toast",
 };

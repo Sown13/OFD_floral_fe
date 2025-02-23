@@ -1,11 +1,10 @@
 import { Link } from "react-router-dom";
 import Product from "./Product";
-import ProductH from "./ProductH";
 import { useState, useEffect, useCallback } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ScrollToTopOnMount from "../template/ScrollToTopOnMount";
 import floralsServices from "../services/floralsServices";
-import Paginate from "../components/Pagination";
+import Pagination from "../components/Pagination";
 import { jwtDecode } from "jwt-decode";
 import toastMessage from "../components/Toast";
 
@@ -109,7 +108,6 @@ function FilterMenuLeft() {
 }
 
 function ProductList() {
-    const [viewType, setViewType] = useState({ grid: true });
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [florals, setFlorals] = useState([]);
@@ -142,12 +140,6 @@ function ProductList() {
     const handlePageChange = (selectedPage) => {
         setCurrentPage(selectedPage);
     };
-
-    function changeViewType() {
-        setViewType({
-            grid: !viewType.grid,
-        });
-    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -313,64 +305,30 @@ function ProductList() {
                                         <FontAwesomeIcon icon={["fas", "search"]} />
                                     </button>
                                 </div>
-                                <button
-                                    className="btn btn-outline-dark ms-2 d-none d-lg-inline"
-                                    onClick={changeViewType}
-                                >
-                                    <FontAwesomeIcon
-                                        icon={["fas", viewType.grid ? "th-list" : "th-large"]}
-                                    />
-                                </button>
-                                {/* {decodedToken && decodedToken.role === "admin" && (
+                                {decodedToken && (
                                     <button
-                                        className="btn btn-outline-dark ms-2 d-none d-lg-inline"
+                                        className="btn btn-outline-dark ms-2"
                                         data-bs-toggle="modal"
                                         data-bs-target="#addFlower"
+                                        title="Thêm mới"
                                     >
-                                        <FontAwesomeIcon
-                                            icon={["fas", viewType.grid ? "plus" : "th-large"]}
-                                        />
+                                        <FontAwesomeIcon icon={["fas", "plus"]} />
                                     </button>
-                                )} */}
-                                <button
-                                    className="btn btn-outline-dark ms-2 d-none d-lg-inline"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#addFlower"
-                                >
-                                    <FontAwesomeIcon
-                                        icon={["fas", viewType.grid ? "plus" : "th-large"]}
-                                    />
-                                </button>
+                                )}
                             </div>
                         </div>
-                        <div
-                            className={
-                                "row g-3 mb-4 flex-grow-1 " +
-                                (viewType.grid ? "row-cols-xl-3" : "row-cols-xl-2")
-                            }
-                        >
+                        <div className={"row g-3 mb-4 flex-grow-1 row-cols-xl-3"}>
                             {florals &&
-                                florals.map((floral, i) => {
-                                    if (viewType.grid) {
-                                        return (
-                                            <Product
-                                                key={floral._id}
-                                                floral={floral}
-                                                percentOff={i < 2 ? 15 : null}
-                                            />
-                                        );
-                                    }
-                                    return (
-                                        <ProductH
-                                            key={floral._id || i}
-                                            floral={floral}
-                                            percentOff={i % 4 === 0 ? 15 : null}
-                                        />
-                                    );
-                                })}
+                                florals.map((floral, i) => (
+                                    <Product
+                                        key={floral._id}
+                                        floral={floral}
+                                        percentOff={i < 2 ? 15 : null}
+                                    />
+                                ))}
                         </div>
                         <div className="mt-auto">
-                            <Paginate
+                            <Pagination
                                 onPageChange={handlePageChange}
                                 totalPages={totalPages}
                                 currentPage={currentPage}

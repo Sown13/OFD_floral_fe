@@ -4,7 +4,7 @@ import toastMessage from "../components/Toast";
 const ProtectedRoute = () => {
     const token = localStorage.getItem("token");
     if (!token) {
-        toastMessage.info("Bạn cần đăng nhập để tiếp tục", "error");
+        toastMessage.info("Bạn cần đăng nhập để tiếp tục");
         return <Navigate to="/login" replace />;
     }
     return <Outlet />;
