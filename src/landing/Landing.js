@@ -45,8 +45,11 @@ function Landing() {
                 <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 px-md-5">
                     {florals.map((floral) => (
                         <div className="col" key={floral._id}>
-                            <div className="card shadow-sm">
-                                <Link to={`/products/${floral._id}`} replace>
+                            <div className="card shadow-sm product-card">
+                                <Link
+                                    to={`/products/${floral._id}`}
+                                    style={{ display: "block", height: "240px" }}
+                                >
                                     <img
                                         className="card-img-top bg-dark"
                                         style={{ objectFit: "cover" }}

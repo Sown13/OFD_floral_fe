@@ -1,38 +1,15 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import api from "../api/api";
-import { useNavigate } from "react-router-dom";
+import authenServices from "../services/authenServices";
 
 function LoginForm() {
-    const navigate = useNavigate();
     const [username, setUserName] = useState("");
     const [password, setPassword] = useState("");
     const [rememberMe, setRememberMe] = useState(false);
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        try {
-            const response = await api.post("/users/login", { username, password });
-
-            // console.log("Response data:", response.data);
-
-            const { accessToken, refreshToken } = response.data;
-            localStorage.setItem("accessToken", accessToken);
-            localStorage.setItem("refreshToken", refreshToken);
-
-            alert("Login successful");
-            navigate("/products");
-        } catch (error) {
-            if (error.response) {
-                console.log("Error response:", error.response.data);
-                alert(error.response.data.message || "Login failed");
-                return;
-            } else {
-                console.error("Error:", error);
-                alert("Something went wrong");
-                return;
-            }
-        }
+        authenServices.login({ username, password });
     };
 
     return (

@@ -19,9 +19,8 @@ api.interceptors.request.use(
                 window.location.href = "/login";
                 return Promise.reject(new Error("Unauthorized: No token found"));
             }
-            config.headers.Authorization = `Bearer ${token}`;
         }
-
+        config.headers.Authorization = `Bearer ${token}`;
         return config;
     },
     (error) => Promise.reject(error)
