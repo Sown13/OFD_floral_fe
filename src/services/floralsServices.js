@@ -1,14 +1,14 @@
 import api from "../api/api";
 import toastMessage from "../components/Toast";
 
-const getFlorals = async (page, limit, search) => {
+const getFlorals = async (page, limit, search = "", filters = {}) => {
     if (!page || !limit) {
         toastMessage.error("Invalid request");
         return;
     }
     try {
         const response = await api.get("/florals", {
-            params: { page, limit, search },
+            params: { page, limit, search, ...filters },
         });
         return response.data;
     } catch (error) {
@@ -46,6 +46,7 @@ const updateFloral = async (id, floralData) => {
     }
     try {
         const response = await api.put(`/florals/${id}`, floralData);
+        toastMessage.success("Update sản phẩm thành công");
         return response.data;
     } catch (error) {
         toastMessage.error(error.message);
@@ -59,7 +60,7 @@ const deleteFloral = async (id) => {
     }
     try {
         await api.delete(`/florals/${id}`);
-        console.log(`Floral with ID ${id} deleted.`);
+        toastMessage.success("Xóa sản phẩm thành công");
     } catch (error) {
         toastMessage.error(error.message);
     }

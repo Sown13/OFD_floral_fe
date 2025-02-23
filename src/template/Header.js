@@ -41,6 +41,26 @@ function Header() {
                                 </Link>
                             </li>
                         </ul>
+                        {decodedToken && (
+                            <>
+                                <button
+                                    className="btn btn-outline-dark me-2"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#addFlower"
+                                    title="Thêm mới"
+                                >
+                                    <FontAwesomeIcon icon={["fas", "plus"]} />
+                                </button>
+                                <button
+                                    className="btn btn-outline-dark me-2"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editFlower"
+                                    title="Chỉnh sửa"
+                                >
+                                    <FontAwesomeIcon icon={["fas", "pencil"]} />
+                                </button>
+                            </>
+                        )}
                         <Link to="/cart" className="btn btn-outline-dark me-3 d-none d-lg-inline">
                             <FontAwesomeIcon icon={["fas", "shopping-cart"]} />
                             <span className="ms-3 badge rounded-pill bg-dark">0</span>
