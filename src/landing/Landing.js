@@ -5,15 +5,50 @@ import { faFacebook, faInstagram, faTwitter } from "@fortawesome/free-brands-svg
 import Banner from "./Banner";
 import floralsServices from "../services/floralsServices";
 import ScrollToTopOnMount from "../template/ScrollToTopOnMount";
+import toastMessage from "../components/Toast";
 
 function Landing() {
     const [florals, setFlorals] = useState([]);
 
     useEffect(() => {
         floralsServices.getFlorals(1, 10).then((data) => {
-            setFlorals(data.data.slice(0, 6));
+            setFlorals(data.data.slice(0, 6)); 
         });
     }, []);
+
+    // Hàm giải mã token để lấy username
+    const getUsernameFromToken = (token) => {
+        try {
+            const payload = JSON.parse(atob(token.split(".")[1])); 
+            return payload.username;
+        } catch (error) {
+            console.error("Token không hợp lệ:", error);
+            return null;
+        }
+    };
+
+    // Hàm thêm sản phẩm vào giỏ hàng
+    const addToCart = (floral) => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            toastMessage.error("Bạn cần đăng nhập để thêm vào giỏ hàng!");
+            return;
+        }
+
+        const username = getUsernameFromToken(token);
+        let cart = JSON.parse(localStorage.getItem(username)) || [];
+
+        const existingProductIndex = cart.findIndex((item) => item._id === floral._id);
+
+        if (existingProductIndex !== -1) {
+            cart[existingProductIndex].quantity += 1;
+        } else {
+            cart.push({ ...floral, quantity: 1 }); 
+        }
+
+        localStorage.setItem(username, JSON.stringify(cart));
+        toastMessage.success("Đã thêm sản phẩm vào giỏ hàng!");
+    };
 
     return (
         <>
@@ -40,6 +75,8 @@ function Landing() {
                     </Link>
                 </div>
             </div>
+
+            {/* Sản phẩm nổi bật */}
             <h2 className="text-muted text-center mt-4 mb-3">Sản phẩm nổi bật</h2>
             <div className="container pb-5 px-lg-5">
                 <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 px-md-5">
@@ -55,7 +92,7 @@ function Landing() {
                                         style={{ objectFit: "cover" }}
                                         height="240"
                                         alt={floral.name}
-                                        src={floral.images}
+                                        src={floral.images} 
                                     />
                                 </Link>
                                 <div className="card-body">
@@ -66,7 +103,10 @@ function Landing() {
                                         {floral.price.toLocaleString()} VND
                                     </p>
                                     <div className="d-grid d-block">
-                                        <button className="btn btn-outline-dark mt-3">
+                                        <button
+                                            className="btn btn-outline-dark mt-3"
+                                            onClick={() => addToCart(floral)}
+                                        >
                                             Thêm vào giỏ hàng
                                         </button>
                                     </div>
@@ -76,6 +116,8 @@ function Landing() {
                     ))}
                 </div>
             </div>
+
+            {/* Mạng xã hội */}
             <div className="d-flex flex-column bg-white py-4">
                 <h5 className="text-center mb-3">Follow us on</h5>
                 <div className="d-flex justify-content-center">

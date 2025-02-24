@@ -3,15 +3,16 @@ import { useParams, Link } from "react-router-dom";
 import floralsServices from "../../services/floralsServices";
 import RelatedProduct from "./RelatedProduct";
 import ScrollToTopOnMount from "../../template/ScrollToTopOnMount";
+import toastMessage from "../../components/Toast";
 
 function ProductDetail() {
-  const { id } = useParams(); 
-  const [floral, setFloral] = useState(null); 
+  const { id } = useParams();
+  const [floral, setFloral] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     floralsServices
-      .getFloralById(id) 
+      .getFloralById(id)
       .then((data) => {
         setFloral(data);
         setLoading(false);
@@ -21,6 +22,40 @@ function ProductDetail() {
         setLoading(false);
       });
   }, [id]);
+
+  // Hàm giải mã token để lấy username
+  const getUsernameFromToken = (token) => {
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1])); // Giải mã payload
+      return payload.username;
+    } catch (error) {
+      console.error("Token không hợp lệ:", error);
+      return null;
+    }
+  };
+
+  // Hàm thêm sản phẩm vào giỏ hàng
+  const addToCart = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toastMessage.error("Bạn cần đăng nhập để thêm vào giỏ hàng!");
+      return;
+    }
+
+    const username = getUsernameFromToken(token);
+    let cart = JSON.parse(localStorage.getItem(username)) || [];
+
+    const existingProductIndex = cart.findIndex((item) => item._id === floral._id);
+
+    if (existingProductIndex !== -1) {
+      cart[existingProductIndex].quantity += 1; // Tăng số lượng nếu sản phẩm đã có
+    } else {
+      cart.push({ ...floral, quantity: 1 }); // Thêm sản phẩm mới
+    }
+
+    localStorage.setItem(username, JSON.stringify(cart));
+    toastMessage.success("Đã thêm sản phẩm vào giỏ hàng!");
+  };
 
   if (loading) {
     return <div className="container mt-5">Đang tải dữ liệu...</div>;
@@ -51,9 +86,9 @@ function ProductDetail() {
           <img
             className="border rounded ratio ratio-1x1"
             alt={floral.name}
-            src={floral.cover}
+            src={floral.images}
           />
-          <div className="d-flex flex-nowrap mt-3" style={{ overflowX: "scroll" }}>
+          {/* <div className="d-flex flex-nowrap mt-3" style={{ overflowX: "scroll" }}>
             {floral.images.map((img, index) => (
               <img
                 key={index}
@@ -64,7 +99,7 @@ function ProductDetail() {
                 alt={floral.name}
               />
             ))}
-          </div>
+          </div> */}
         </div>
 
         {/* Thông tin sản phẩm */}
@@ -74,11 +109,13 @@ function ProductDetail() {
 
           <div className="row g-3 mb-4">
             <div className="col">
-              <button className="btn btn-outline-dark py-2 w-100">Thêm vào giỏ</button>
+              <button className="btn btn-outline-dark py-2 w-100" onClick={addToCart}>
+                Thêm vào giỏ
+              </button>
             </div>
-            <div className="col">
+            {/* <div className="col">
               <button className="btn btn-dark py-2 w-100">Mua ngay</button>
-            </div>
+            </div> */}
           </div>
 
           <h4 className="mb-0">Chi tiết sản phẩm</h4>
@@ -99,7 +136,7 @@ function ProductDetail() {
 
           <h4 className="mb-0">🌸 Mô tả</h4>
           <hr />
-          <p className="lead">{floral.description }</p>
+          <p className="lead">{floral.description}</p>
         </div>
       </div>
 

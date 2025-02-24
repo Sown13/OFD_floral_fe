@@ -1,122 +1,197 @@
 import { useState, useEffect } from "react";
-import toastMessage from "../components/Toast"; 
+import toastMessage from "../components/Toast";
 import { useNavigate } from "react-router-dom";
 
+
+
 function Cart() {
-    const [cartItems, setCartItems] = useState([]);
-    const [totalPrice, setTotalPrice] = useState({ subtotal: 0, tax: 0, total: 0 });
-    const navigate = useNavigate();
+  const [cartItems, setCartItems] = useState([]);
+  const [totalPrice, setTotalPrice] = useState({ subtotal: 0, total: 0 });
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        const token = localStorage.getItem("token");
-        const username = token ? JSON.parse(token).username : null;
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const username = token ? getUsernameFromToken(token) : null;
 
-        // Lấy giỏ hàng từ localStorage theo username
-        const storedCart = username ? JSON.parse(localStorage.getItem(username)) || [] : [];
-        setCartItems(storedCart);
+    // Lấy giỏ hàng từ localStorage theo username
+    const storedCart = username
+      ? JSON.parse(localStorage.getItem(username)) || []
+      : [];
+    updateCartAndTotal(storedCart);
+  }, []);
 
-        // Tính tổng tiền
-        let subtotal = storedCart.reduce((acc, item) => acc + item.price * item.quantity, 0);
-        let tax = subtotal * 0.05; // 5% thuế
-        let total = subtotal + tax;
-        setTotalPrice({ subtotal, tax, total });
-    }, []);
+  // Hàm tăng số lượng sản phẩm
+  const increaseQuantity = (productId) => {
+    const updatedCart = cartItems.map((item) => {
+      if (item._id === productId) {
+        return { ...item, quantity: item.quantity + 1 };
+      }
+      return item;
+    });
+    updateCartAndTotal(updatedCart);
+  };
 
-    // Xóa sản phẩm khỏi giỏ hàng
-    const removeFromCart = (productId) => {
-        const updatedCart = cartItems.filter((item) => item._id !== productId);
-        setCartItems(updatedCart);
+  // Hàm giảm số lượng sản phẩm
+  const decreaseQuantity = (productId) => {
+    const updatedCart = cartItems.map((item) => {
+      if (item._id === productId && item.quantity > 1) {
+        return { ...item, quantity: item.quantity - 1 };
+      }
+      return item;
+    });
+    updateCartAndTotal(updatedCart);
+  };
 
-        // Cập nhật localStorage
-        const token = localStorage.getItem("token");
-        if (token) {
-            const username = JSON.parse(token).username;
-            localStorage.setItem(username, JSON.stringify(updatedCart));
-        }
-        
-        toastMessage.success("Sản phẩm đã được xóa khỏi giỏ hàng!");
-    };
+  // Hàm cập nhật giỏ hàng và tổng tiền
+  const updateCartAndTotal = (updatedCart) => {
+    setCartItems(updatedCart);
 
-    // Kiểm tra đăng nhập khi nhấn "Thanh Toán"
-    const handleCheckout = () => {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            toastMessage.error("Bạn cần đăng nhập để thanh toán!");
-            navigate("/login");
-            return;
-        }
-        toastMessage.success("Chuyển đến trang thanh toán...");
-        navigate("/checkout");
-    };
+    const token = localStorage.getItem("token");
+    if (token) {
+      const username = getUsernameFromToken(token);
+      localStorage.setItem(username, JSON.stringify(updatedCart));
+    }
 
-    return (
-        <div className="container mt-5 py-4 px-xl-5">
-            <h5 className="text-left mb-4 ps-2">Cart List</h5>
-            <div className="row">
-                <div className="col-9">
-                    <table className="table table-hover table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Product Img</th>
-                                <th>Name</th>
-                                <th>Price</th>
-                                <th>Quantity</th>
-                                <th>Sub Total</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {cartItems.length > 0 ? (
-                                cartItems.map((item) => (
-                                    <tr key={item._id}>
-                                        <td>
-                                            <img src={item.images} alt={item.name} width="50" height="50" />
-                                        </td>
-                                        <td>{item.name}</td>
-                                        <td>{item.price.toLocaleString()} VND</td>
-                                        <td>{item.quantity}</td>
-                                        <td>{(item.price * item.quantity).toLocaleString()} VND</td>
-                                        <td>
-                                            <button
-                                                className="btn btn-danger btn-sm"
-                                                onClick={() => removeFromCart(item._id)}
-                                            >
-                                                Xóa
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan="6" className="text-center">
-                                        Giỏ hàng trống!
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-                <div className="col-3 bg-light p-4">
-                    <h5 className="text-left mb-4 pb-2">Cart Price</h5>
-                    <div className="d-flex justify-content-between mb-3">
-                        <h6 className="fw-normal">Tax (5%):</h6>
-                        <span>{totalPrice.tax.toLocaleString()} VND</span>
-                    </div>
-                    <div className="d-flex justify-content-between mb-4">
-                        <h6 className="fw-normal">SubTotal Price:</h6>
-                        <span>{totalPrice.subtotal.toLocaleString()} VND</span>
-                    </div>
-                    <div className="d-flex justify-content-between fw-bold">
-                        <h6>Total Price:</h6>
-                        <span>{totalPrice.total.toLocaleString()} VND</span>
-                    </div>
-                    <button className="btn btn-dark mt-4 w-100" onClick={handleCheckout}>
-                        Thanh Toán
-                    </button>
-                </div>
-            </div>
-        </div>
+    const subtotal = updatedCart.reduce(
+      (acc, item) => acc + item.price * item.quantity,
+      0
     );
+    const total = subtotal;
+    setTotalPrice({ subtotal, total });
+  };
+
+  // Giải mã token để lấy userId
+  const getUsernameFromToken = (token) => {
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      return payload.username;
+    } catch (error) {
+      console.error("Token không hợp lệ:", error);
+      return null;
+    }
+  };
+
+  // Xóa sản phẩm khỏi giỏ hàng
+  const removeFromCart = (productId) => {
+    const updatedCart = cartItems.filter((item) => item._id !== productId);
+    updateCartAndTotal(updatedCart);
+    toastMessage.success("Sản phẩm đã được xóa khỏi giỏ hàng!");
+  };
+
+  // Thanh toán và lưu đơn hàng vào DB Hải chưa xử lý nhé các anh em
+  const handleCheckout = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toastMessage.error("Bạn cần đăng nhập để thanh toán!");
+      navigate("/login");
+      return;
+    }
+  
+    const username = getUsernameFromToken(token);
+    const storedCart = JSON.parse(localStorage.getItem(username)) || [];
+  
+    if (storedCart.length === 0) {
+      toastMessage.error("Giỏ hàng trống, không thể thanh toán!");
+      return;
+    }
+  
+    const orderDetails = {
+      items: storedCart.map((item) => ({
+        floralId: item._id,
+        quantity: item.quantity,
+      })),
+      totalPrice: totalPrice.total,
+    };
+  };
+
+  return (
+    <div className="container mt-5 py-4 px-xl-5">
+      <h5 className="text-left mb-4 ps-2">Cart List</h5>
+      <div className="row">
+        <div className="col-9">
+          <table className="table table-hover table-bordered">
+            <thead>
+              <tr>
+                <th>Product Img</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Sub Total</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cartItems.length > 0 ? (
+                cartItems.map((item) => (
+                  <tr key={item._id}>
+                    <td>
+                      <img
+                        src={item.images}
+                        alt={item.name}
+                        width="50"
+                        height="50"
+                      />
+                    </td>
+                    <td>{item.name}</td>
+                    <td>{item.price.toLocaleString()} VND</td>
+                    <td>
+                      <div className="d-flex align-items-center">
+                        <button
+                          className="btn btn-sm btn-outline-secondary me-2"
+                          onClick={() => decreaseQuantity(item._id)}
+                          disabled={item.quantity === 1} // Không giảm dưới 1
+                        >
+                          -
+                        </button>
+                        <span>{item.quantity}</span>
+                        <button
+                          className="btn btn-sm btn-outline-secondary ms-2"
+                          onClick={() => increaseQuantity(item._id)}
+                        >
+                          +
+                        </button>
+                      </div>
+                    </td>
+                    <td>
+                      {(item.price * item.quantity).toLocaleString()} VND
+                    </td>
+                    <td>
+                      <button
+                        className="btn btn-danger btn-sm"
+                        onClick={() => removeFromCart(item._id)}
+                      >
+                        Xóa
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6" className="text-center">
+                    Giỏ hàng trống!
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+        <div className="col-3 bg-light p-4">
+          <h5 className="text-left mb-4 pb-2">Cart Price</h5>
+          <div className="d-flex justify-content-between mb-4">
+            <h6 className="fw-normal">SubTotal Price:</h6>
+            <span>{totalPrice.subtotal.toLocaleString()} VND</span>
+          </div>
+          <div className="d-flex justify-content-between fw-bold">
+            <h6>Total Price:</h6>
+            <span>{totalPrice.total.toLocaleString()} VND</span>
+          </div>
+          <button className="btn btn-dark mt-4 w-100" onClick={handleCheckout}>
+            Mua
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default Cart;
