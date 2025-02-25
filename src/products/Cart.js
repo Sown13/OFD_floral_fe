@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import toastMessage from "../components/Toast";
 import { useNavigate } from "react-router-dom";
-
-
+import cartService from "../services/cartServices";
 
 function Cart() {
   const [cartItems, setCartItems] = useState([]);
@@ -88,6 +87,7 @@ function Cart() {
     }
   
     const username = getUsernameFromToken(token);
+    const userId = getUserIdFromToken(token); // Giả sử token chứa userId
     const storedCart = JSON.parse(localStorage.getItem(username)) || [];
   
     if (storedCart.length === 0) {
@@ -95,13 +95,36 @@ function Cart() {
       return;
     }
   
-    const orderDetails = {
-      items: storedCart.map((item) => ({
-        floralId: item._id,
-        quantity: item.quantity,
-      })),
-      totalPrice: totalPrice.total,
-    };
+    try {
+      // Gọi API để lưu giỏ hàng vào DB
+      const response = await cartService.addToCart(
+        userId,
+        storedCart.map((item) => ({
+          floralId: item._id,
+          quantity: item.quantity,
+        }))
+      );
+  
+      // Xóa giỏ hàng trong localStorage sau khi thanh toán thành công
+      localStorage.removeItem(username);
+      setCartItems([]);
+      setTotalPrice({ subtotal: 0, total: 0 });
+      toastMessage.success(" Đã lưu đơn hàng !");
+    } catch (error) {
+      console.error("Lỗi khi lưu đơn hàng:", error);
+      toastMessage.error("Lỗi khi lưu đơn hàng!");
+    }
+  };
+  
+  // Hàm lấy userId từ token
+  const getUserIdFromToken = (token) => {
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      return payload.userId;
+    } catch (error) {
+      console.error("Token không hợp lệ:", error);
+      return null;
+    }
   };
 
   return (
