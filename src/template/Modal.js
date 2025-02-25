@@ -2,24 +2,51 @@ import { useState, useMemo, useEffect } from "react";
 import floralsServices from "../services/floralsServices";
 import { debounce } from "lodash";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import categoryServices from "../services/categoryServices";
 
 const AddFlowerModal = () => {
     const [images, setImages] = useState([]);
     const [categories, setCategories] = useState([]);
+    const [allCategories, setAllCategories] = useState([]);
     const [categoryInput, setCategoryInput] = useState("");
+    const [showDropdown, setShowDropdown] = useState(false);
 
-    const handleAddCategory = () => {
-        if (categoryInput.trim() !== "") {
-            setCategories([...categories, categoryInput.trim()]);
+    useEffect(() => {
+        categoryServices.getCategories().then((response) => {
+            setAllCategories(response);
+        });
+    }, []);
+
+    const filteredCategories = useMemo(
+        () => allCategories.filter((category) => category.name.toLowerCase().includes(categoryInput.toLowerCase())),
+        [categoryInput, allCategories]
+    );
+
+    const handleAddCategory = (category) => {
+        if (!categories.some((c) => c._id === category._id)) {
+            setCategories([...categories, category]);
             setCategoryInput("");
+            setShowDropdown(false);
         }
+    };
+
+    const handleAddImage = () => {
+        setImages([...images, { src: "" }]);
+    };
+
+    const handleImageChange = (index, value) => {
+        const updatedImages = [...images];
+        updatedImages[index].src = value.trim() === "" ? null : value;
+        setImages(updatedImages);
     };
 
     const handleAddFlowerSubmit = (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
         const flowerData = Object.fromEntries(formData.entries());
-        console.log("New Flower Data:", flowerData);
+        flowerData.categories = categories.map((category) => category.name);
+        flowerData.images = images.map((image) => image.src);
+        floralsServices.createFloral(flowerData).then((response) => {});
     };
 
     return (
@@ -53,7 +80,7 @@ const AddFlowerModal = () => {
                                 </div>
                                 <div className="col-md-6 mb-3">
                                     <label className="form-label text-primary">Hình ảnh chính</label>
-                                    <input type="text" className="form-control" name="images" placeholder="Nhập URL hình ảnh" required />
+                                    <input type="text" className="form-control" name="cover" placeholder="Nhập URL hình ảnh" required />
                                 </div>
                                 <div className="col-md-6 mb-3">
                                     <label className="form-label text-primary">Số lượng</label>
@@ -65,29 +92,56 @@ const AddFlowerModal = () => {
                                         <div className="col-4 ms-3 me-3">
                                             <input
                                                 placeholder="Chọn phân loại..."
-                                                name="addCategory"
                                                 type="text"
                                                 className="form-control mt-1"
                                                 value={categoryInput}
-                                                onChange={(e) => setCategoryInput(e.target.value)}
+                                                onChange={(e) => {
+                                                    setCategoryInput(e.target.value);
+                                                    setShowDropdown(true);
+                                                }}
+                                                onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
                                             />
+                                            {showDropdown && filteredCategories.length > 0 && (
+                                                <ul className="dropdown-menu show mt-1">
+                                                    {filteredCategories.map((category, index) => (
+                                                        <li
+                                                            key={category._id}
+                                                            className="dropdown-item"
+                                                            onMouseDown={() => handleAddCategory(category)}
+                                                            style={{ cursor: "pointer" }}
+                                                        >
+                                                            {category.name}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            )}
                                         </div>
-                                        <FontAwesomeIcon icon="fa-solid fa-plus-circle" className="fs-5 text-success cursor-pointer" onClick={handleAddCategory} />
                                     </div>
-                                    {categories.length > 0 && categories.map((category, index) => <b key={index}>{category}, </b>)}
+                                    {categories.length > 0 && categories.map((category, index) => <b key={index}>{category.name}, </b>)}
                                 </div>
                                 <div className="col-12 mb-3">
                                     <label className="form-label text-primary">Mô tả</label>
                                     <textarea className="form-control" name="description" rows="2"></textarea>
                                 </div>
                                 <div className="col-12 mb-3">
-                                    <label className="form-label text-primary">
-                                        Hình ảnh phụ <FontAwesomeIcon icon="fa-solid fa-plus-circle" />
-                                    </label>
+                                    <div className="d-flex align-items-center">
+                                        <label className="form-label text-primary">Hình ảnh phụ</label>
+                                        <FontAwesomeIcon
+                                            icon="fa-solid fa-plus-circle"
+                                            className="fs-5 ms-2 text-success cursor-pointer"
+                                            onClick={handleAddImage}
+                                        />
+                                    </div>
                                     <div className="row">
                                         {images.length > 0 &&
                                             images.map((image, index) => (
                                                 <div className="col-md-3" key={index}>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control mb-2"
+                                                        value={image.src}
+                                                        onChange={(e) => handleImageChange(index, e.target.value)}
+                                                    />
                                                     <img
                                                         alt=""
                                                         src={image.src}
@@ -98,7 +152,6 @@ const AddFlowerModal = () => {
                                                             objectFit: "cover",
                                                         }}
                                                     />
-                                                    <input name={`images_${index}`} type="text" className="form-control mt-1" />
                                                 </div>
                                             ))}
                                     </div>
@@ -205,7 +258,12 @@ const UpdateFlowerModal = () => {
                             {showDropdown && filteredFlowers.length > 0 && (
                                 <ul className="dropdown-menu show" style={{ width: "100%" }}>
                                     {filteredFlowers.map((flower) => (
-                                        <li key={flower.id} className="dropdown-item d-flex align-items-center" onMouseDown={() => handleSelectFlower(flower)} style={{ cursor: "pointer" }}>
+                                        <li
+                                            key={flower.id}
+                                            className="dropdown-item d-flex align-items-center"
+                                            onMouseDown={() => handleSelectFlower(flower)}
+                                            style={{ cursor: "pointer" }}
+                                        >
                                             <img
                                                 alt={flower.name}
                                                 src={flower.cover}
@@ -250,35 +308,87 @@ const UpdateFlowerModal = () => {
                                         <div className="row">
                                             <div className="col-md-6 mb-3">
                                                 <label className="form-label text-primary">Tên</label>
-                                                <input type="text" className="form-control" name="name" value={flowerData.name || ""} onChange={handleChange} required />
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    name="name"
+                                                    value={flowerData.name || ""}
+                                                    onChange={handleChange}
+                                                    required
+                                                />
                                             </div>
                                             <div className="col-md-6 mb-3">
                                                 <label className="form-label text-primary">Giá cả</label>
-                                                <input type="number" className="form-control" name="price" value={flowerData.price || ""} onChange={handleChange} required />
+                                                <input
+                                                    type="number"
+                                                    className="form-control"
+                                                    name="price"
+                                                    value={flowerData.price || ""}
+                                                    onChange={handleChange}
+                                                    required
+                                                />
                                             </div>
                                             <div className="col-md-6 mb-3">
                                                 <label className="form-label text-primary">Phân loại</label>
-                                                <input type="text" className="form-control" name="category" value={flowerData.category || ""} onChange={handleChange} required />
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    name="category"
+                                                    value={flowerData.category || ""}
+                                                    onChange={handleChange}
+                                                    required
+                                                />
                                             </div>
                                             <div className="col-md-6 mb-3">
                                                 <label className="form-label text-primary">Màu sắc</label>
-                                                <input type="text" className="form-control" name="color" value={flowerData.color || ""} onChange={handleChange} required />
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    name="color"
+                                                    value={flowerData.color || ""}
+                                                    onChange={handleChange}
+                                                    required
+                                                />
                                             </div>
                                             <div className="col-md-6 mb-3">
                                                 <label className="form-label text-primary">Số lượng</label>
-                                                <input type="number" className="form-control" name="quantity" value={flowerData.quantity || ""} onChange={handleChange} required />
+                                                <input
+                                                    type="number"
+                                                    className="form-control"
+                                                    name="quantity"
+                                                    value={flowerData.quantity || ""}
+                                                    onChange={handleChange}
+                                                    required
+                                                />
                                             </div>
                                             <div className="col-md-6 mb-3">
                                                 <label className="form-label text-primary">Trạng thái</label>
-                                                <input type="text" className="form-control" name="status" value={flowerData.status || ""} onChange={handleChange} required />
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    name="status"
+                                                    value={flowerData.status || ""}
+                                                    onChange={handleChange}
+                                                    required
+                                                />
                                             </div>
                                             <div className="col-12 mb-3">
                                                 <label className="form-label text-primary">Mô tả</label>
-                                                <textarea className="form-control" rows="4" name="description" value={flowerData.description || ""} onChange={handleChange}></textarea>
+                                                <textarea
+                                                    className="form-control"
+                                                    rows="4"
+                                                    name="description"
+                                                    value={flowerData.description || ""}
+                                                    onChange={handleChange}
+                                                ></textarea>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-md-12 text-center p-1 expand-div mt-2" data-bs-toggle="collapse" data-bs-target="#flowerDetails">
+                                    <div
+                                        className="col-md-12 text-center p-1 expand-div mt-2"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#flowerDetails"
+                                    >
                                         Xem chi tiết ảnh <FontAwesomeIcon icon="fa-solid fa-caret-down" />
                                     </div>
                                     <div className="collapse mt-2" id="flowerDetails">
