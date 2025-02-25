@@ -5,27 +5,15 @@ import { faFacebook, faInstagram, faTwitter } from "@fortawesome/free-brands-svg
 import Banner from "./Banner";
 import floralsServices from "../services/floralsServices";
 import ScrollToTopOnMount from "../template/ScrollToTopOnMount";
-import toastMessage from "../components/Toast";
 
 function Landing() {
     const [florals, setFlorals] = useState([]);
 
     useEffect(() => {
-        floralsServices.getFlorals(1, 10).then((data) => {
-            setFlorals(data.data.slice(0, 6));
+        floralsServices.getFlorals(1, 6).then((data) => {
+            setFlorals(data.data);
         });
     }, []);
-
-    // Hàm giải mã token để lấy username
-    const getUsernameFromToken = (token) => {
-        try {
-            const payload = JSON.parse(atob(token.split(".")[1]));
-            return payload.username;
-        } catch (error) {
-            console.error("Token không hợp lệ:", error);
-            return null;
-        }
-    };
 
     return (
         <>

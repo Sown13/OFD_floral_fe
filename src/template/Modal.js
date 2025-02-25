@@ -1,10 +1,12 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useContext } from "react";
 import floralsServices from "../services/floralsServices";
 import { debounce } from "lodash";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import categoryServices from "../services/categoryServices";
+import { RefreshContext } from "../components/RefreshOutLet";
 
 const AddFlowerModal = () => {
+    const { refreshOutlet } = useContext(RefreshContext);
     const [images, setImages] = useState([]);
     const [categories, setCategories] = useState([]);
     const [allCategories, setAllCategories] = useState([]);
@@ -46,7 +48,9 @@ const AddFlowerModal = () => {
         const flowerData = Object.fromEntries(formData.entries());
         flowerData.categories = categories.map((category) => category.name);
         flowerData.images = images.map((image) => image.src);
-        floralsServices.createFloral(flowerData).then((response) => {});
+        floralsServices.createFloral(flowerData).then((response) => {
+            refreshOutlet();
+        });
     };
 
     return (
@@ -172,6 +176,7 @@ const AddFlowerModal = () => {
 };
 
 const UpdateFlowerModal = () => {
+    const { refreshOutlet } = useContext(RefreshContext);
     const [filteredFlowers, setFilteredFlowers] = useState([]);
     const [selectedFlower, setSelectedFlower] = useState(null);
     const [showDropdown, setShowDropdown] = useState(false);
@@ -226,11 +231,15 @@ const UpdateFlowerModal = () => {
             }
         }
         updatedFlower = { ...updatedFlower, images: imagesArray };
-        floralsServices.updateFloral(selectedFlower._id, updatedFlower).then((response) => {});
+        floralsServices.updateFloral(selectedFlower._id, updatedFlower).then((response) => {
+            refreshOutlet();
+        });
     };
 
     const handleDelete = () => {
-        floralsServices.deleteFloral(selectedFlower._id).then((response) => {});
+        floralsServices.deleteFloral(selectedFlower._id).then((response) => {
+            refreshOutlet();
+        });
     };
 
     return (

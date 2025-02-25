@@ -16,7 +16,6 @@ const getFlorals = async (page, limit, search = "", filters = {}) => {
     }
 };
 
-
 const getCategories = async () => {
     try {
         const response = await api.get("/categories");
@@ -27,22 +26,22 @@ const getCategories = async () => {
 };
 
 const getFloralById = async (id) => {
-  try {
-    const response = await api.get(`/florals/${id}`);
-    return response.data;
-  } catch (error) {
-    toastMessage.error(error.message);
-  }
+    try {
+        const response = await api.get(`/florals/${id}`);
+        return response.data;
+    } catch (error) {
+        toastMessage.error(error.message);
+    }
 };
 
-
 const createFloral = async (floralData) => {
-  try {
-    const response = await api.post("/florals", floralData);
-    return response.data;
-  } catch (error) {
-    toastMessage.error(error.message);
-  }
+    try {
+        const response = await api.post("/florals", floralData);
+        toastMessage.success("Add sản phẩm thành công");
+        return response.data;
+    } catch (error) {
+        toastMessage.error(error.message);
+    }
 };
 
 const updateFloral = async (id, floralData) => {
@@ -73,12 +72,12 @@ const deleteFloral = async (id) => {
 };
 
 const floralsServices = {
-  getFlorals,
-  getFloralById,
-  getCategories,
-  createFloral,
-  updateFloral,
-  deleteFloral,
+    getFlorals,
+    getFloralById,
+    getCategories,
+    createFloral,
+    updateFloral,
+    deleteFloral,
 };
 
 export default floralsServices;
