@@ -31,24 +31,29 @@ function Landing() {
     const addToCart = (floral) => {
         const token = localStorage.getItem("token");
         if (!token) {
-            toastMessage.error("Bạn cần đăng nhập để thêm vào giỏ hàng!");
-            return;
+          toastMessage.error("Bạn cần đăng nhập để thêm vào giỏ hàng!");
+          return;
         }
-
+      
         const username = getUsernameFromToken(token);
-        let cart = JSON.parse(localStorage.getItem(username)) || [];
-
-        const existingProductIndex = cart.findIndex((item) => item._id === floral._id);
-
-        if (existingProductIndex !== -1) {
-            cart[existingProductIndex].quantity += 1;
-        } else {
-            cart.push({ ...floral, quantity: 1 }); 
+        let cart = JSON.parse(localStorage.getItem(username));
+      
+        // Đảm bảo cart là một mảng hợp lệ
+        if (!Array.isArray(cart)) {
+          cart = [];
         }
-
+        const existingProductIndex = cart.findIndex((item) => item._id === floral._id);
+      
+        if (existingProductIndex !== -1) {
+          cart[existingProductIndex].quantity += 1;
+        } else {
+          cart.push({ ...floral, quantity: 1 });
+        }
+      
+        // Lưu lại vào localStorage
         localStorage.setItem(username, JSON.stringify(cart));
         toastMessage.success("Đã thêm sản phẩm vào giỏ hàng!");
-    };
+      };
 
     return (
         <>
