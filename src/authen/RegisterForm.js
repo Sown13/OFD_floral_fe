@@ -147,7 +147,7 @@ function RegisterForm() {
           </button>
         </form>
         <p className="text-center mt-3">
-          Already have an account? <a href="#login" className="text-success">Login</a>
+          Already have an account? <a href="/login" className="text-success">Login</a>
         </p>
       </div>
     </div>

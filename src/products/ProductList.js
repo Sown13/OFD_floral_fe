@@ -92,6 +92,8 @@ function FilterMenuLeft({ filterSubmit }) {
     );
 }
 
+const categories = ["Hoa Sinh Nhật", "Hoa Cưới", "Hoa Khai Trương", "Hoa Chúc Mừng"];
+
 function ProductList() {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);

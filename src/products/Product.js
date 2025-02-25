@@ -64,7 +64,7 @@ function Product({ floral, index, percentOff = 15 }) {
                         className="card-img-top bg-dark"
                         style={{ objectFit: "cover", width: "100%", height: "100%" }}
                         alt={floral.name}
-                        src={floral.cover}
+                        src={floral.images}
                     />
                 </Link>
                 <div className="card-body">
