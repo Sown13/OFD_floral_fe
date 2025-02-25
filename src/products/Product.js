@@ -53,10 +53,7 @@ function Product({ floral, index, percentOff = 15 }) {
             <div className="card shadow-sm product-card">
                 <Link to={`/products/${floral._id}`} style={{ display: "block", height: "240px" }}>
                     {isDiscounted && (
-                        <div
-                            className="badge bg-danger py-2 text-white position-absolute"
-                            style={{ top: "0.5rem", right: "0.5rem" }}
-                        >
+                        <div className="badge bg-danger py-2 text-white position-absolute" style={{ top: "0.5rem", right: "0.5rem" }}>
                             {percentOff}% OFF
                         </div>
                     )}
@@ -64,30 +61,23 @@ function Product({ floral, index, percentOff = 15 }) {
                         className="card-img-top bg-dark"
                         style={{ objectFit: "cover", width: "100%", height: "100%" }}
                         alt={floral.name}
-                        src={floral.images}
+                        src={floral.cover}
                     />
                 </Link>
                 <div className="card-body">
-                    <h5 className="card-title text-center text-dark text-truncate">
-                        {floral.name}
-                    </h5>
+                    <h5 className="card-title text-center text-dark text-truncate">{floral.name}</h5>
                     <p className="card-text text-center text-muted mb-0">
                         {isDiscounted ? (
                             <>
                                 <del>{floral.price.toLocaleString()} VND</del>{" "}
-                                <span className="text-danger fw-bold">
-                                    {discountedPrice.toLocaleString()} VND
-                                </span>
+                                <span className="text-danger fw-bold">{discountedPrice.toLocaleString()} VND</span>
                             </>
                         ) : (
                             `${floral.price.toLocaleString()} VND`
                         )}
                     </p>
                     <div className="d-grid d-block">
-                        <button
-                            className="btn btn-outline-dark mt-3"
-                            onClick={() => addToCart(floral)}
-                        >
+                        <button className="btn btn-outline-dark mt-3" onClick={() => addToCart(floral)}>
                             <FontAwesomeIcon icon={["fas", "cart-plus"]} /> Thêm vào giỏ
                         </button>
                     </div>

@@ -6,89 +6,85 @@ import ScrollToTopOnMount from "../../template/ScrollToTopOnMount";
 import toastMessage from "../../components/Toast";
 
 function ProductDetail() {
-  const { id } = useParams();
-  const [floral, setFloral] = useState(null);
-  const [loading, setLoading] = useState(true);
+    const { id } = useParams();
+    const [floral, setFloral] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    floralsServices
-      .getFloralById(id)
-      .then((data) => {
-        setFloral(data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Lỗi khi lấy dữ liệu sản phẩm:", error);
-        setLoading(false);
-      });
-  }, [id]);
+    useEffect(() => {
+        floralsServices
+            .getFloralById(id)
+            .then((data) => {
+                setFloral(data);
+                setLoading(false);
+            })
+            .catch((error) => {
+                console.error("Lỗi khi lấy dữ liệu sản phẩm:", error);
+                setLoading(false);
+            });
+    }, [id]);
 
-  // Hàm giải mã token để lấy username
-  const getUsernameFromToken = (token) => {
-    try {
-      const payload = JSON.parse(atob(token.split(".")[1])); // Giải mã payload
-      return payload.username;
-    } catch (error) {
-      console.error("Token không hợp lệ:", error);
-      return null;
+    // Hàm giải mã token để lấy username
+    const getUsernameFromToken = (token) => {
+        try {
+            const payload = JSON.parse(atob(token.split(".")[1])); // Giải mã payload
+            return payload.username;
+        } catch (error) {
+            console.error("Token không hợp lệ:", error);
+            return null;
+        }
+    };
+
+    // Hàm thêm sản phẩm vào giỏ hàng
+    const addToCart = () => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            toastMessage.error("Bạn cần đăng nhập để thêm vào giỏ hàng!");
+            return;
+        }
+
+        const username = getUsernameFromToken(token);
+        let cart = JSON.parse(localStorage.getItem(username)) || [];
+
+        const existingProductIndex = cart.findIndex((item) => item._id === floral._id);
+
+        if (existingProductIndex !== -1) {
+            cart[existingProductIndex].quantity += 1; // Tăng số lượng nếu sản phẩm đã có
+        } else {
+            cart.push({ ...floral, quantity: 1 }); // Thêm sản phẩm mới
+        }
+
+        localStorage.setItem(username, JSON.stringify(cart));
+        toastMessage.success("Đã thêm sản phẩm vào giỏ hàng!");
+    };
+
+    if (loading) {
+        return <div className="container mt-5">Đang tải dữ liệu...</div>;
     }
-  };
 
-  // Hàm thêm sản phẩm vào giỏ hàng
-  const addToCart = () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      toastMessage.error("Bạn cần đăng nhập để thêm vào giỏ hàng!");
-      return;
+    if (!floral) {
+        return <div className="container mt-5">Không tìm thấy sản phẩm.</div>;
     }
 
-    const username = getUsernameFromToken(token);
-    let cart = JSON.parse(localStorage.getItem(username)) || [];
+    return (
+        <div className="container mt-5 py-4 px-xl-5">
+            <ScrollToTopOnMount />
+            <nav aria-label="breadcrumb" className="bg-custom-light rounded mb-4">
+                <ol className="breadcrumb p-3">
+                    <li className="breadcrumb-item">
+                        <Link className="text-decoration-none link-secondary" to="/products">
+                            Tất cả sản phẩm
+                        </Link>
+                    </li>
+                    <li className="breadcrumb-item active" aria-current="page">
+                        {floral.name}
+                    </li>
+                </ol>
+            </nav>
 
-    const existingProductIndex = cart.findIndex((item) => item._id === floral._id);
-
-    if (existingProductIndex !== -1) {
-      cart[existingProductIndex].quantity += 1; // Tăng số lượng nếu sản phẩm đã có
-    } else {
-      cart.push({ ...floral, quantity: 1 }); // Thêm sản phẩm mới
-    }
-
-    localStorage.setItem(username, JSON.stringify(cart));
-    toastMessage.success("Đã thêm sản phẩm vào giỏ hàng!");
-  };
-
-  if (loading) {
-    return <div className="container mt-5">Đang tải dữ liệu...</div>;
-  }
-
-  if (!floral) {
-    return <div className="container mt-5">Không tìm thấy sản phẩm.</div>;
-  }
-
-  return (
-    <div className="container mt-5 py-4 px-xl-5">
-      <ScrollToTopOnMount />
-      <nav aria-label="breadcrumb" className="bg-custom-light rounded mb-4">
-        <ol className="breadcrumb p-3">
-          <li className="breadcrumb-item">
-            <Link className="text-decoration-none link-secondary" to="/products">
-              Tất cả sản phẩm
-            </Link>
-          </li>
-          <li className="breadcrumb-item active" aria-current="page">
-            {floral.name}
-          </li>
-        </ol>
-      </nav>
-
-      <div className="row mb-4">
-        <div className="col-lg-6">
-          <img
-            className="border rounded ratio ratio-1x1"
-            alt={floral.name}
-            src={floral.images}
-          />
-          {/* <div className="d-flex flex-nowrap mt-3" style={{ overflowX: "scroll" }}>
+            <div className="row mb-4">
+                <div className="col-lg-6">
+                    <img className="border rounded ratio ratio-1x1" alt={floral.name} src={floral.images} />
+                    {/* <div className="d-flex flex-nowrap mt-3" style={{ overflowX: "scroll" }}>
             {floral.images.map((img, index) => (
               <img
                 key={index}
@@ -100,48 +96,48 @@ function ProductDetail() {
               />
             ))}
           </div> */}
-        </div>
+                </div>
 
-        {/* Thông tin sản phẩm */}
-        <div className="col-lg-5">
-          <h2 className="mb-1">{floral.name}</h2>
-          <h4 className="text-muted mb-4">{floral.price.toLocaleString()} VND</h4>
+                {/* Thông tin sản phẩm */}
+                <div className="col-lg-5">
+                    <h2 className="mb-1">{floral.name}</h2>
+                    <h4 className="text-muted mb-4">{floral.price.toLocaleString()} VND</h4>
 
-          <div className="row g-3 mb-4">
-            <div className="col">
-              <button className="btn btn-outline-dark py-2 w-100" onClick={addToCart}>
-                Thêm vào giỏ
-              </button>
-            </div>
-            {/* <div className="col">
+                    <div className="row g-3 mb-4">
+                        <div className="col">
+                            <button className="btn btn-outline-dark py-2 w-100" onClick={addToCart}>
+                                Thêm vào giỏ
+                            </button>
+                        </div>
+                        {/* <div className="col">
               <button className="btn btn-dark py-2 w-100">Mua ngay</button>
             </div> */}
-          </div>
+                    </div>
 
-          <h4 className="mb-0">Chi tiết sản phẩm</h4>
-          <hr />
-          <dl className="row">
-            <dt className="col-sm-4">Loại Hoa</dt>
-            <dd className="col-sm-8 mb-3">{floral.category.join(", ")}</dd>
+                    <h4 className="mb-0">Chi tiết sản phẩm</h4>
+                    <hr />
+                    <dl className="row">
+                        <dt className="col-sm-4">Loại Hoa</dt>
+                        <dd className="col-sm-8 mb-3">{floral.categories.join(", ")}</dd>
 
-            <dt className="col-sm-4">Màu sắc</dt>
-            <dd className="col-sm-8 mb-3">{floral.color || "Chưa cập nhật"}</dd>
+                        <dt className="col-sm-4">Màu sắc</dt>
+                        <dd className="col-sm-8 mb-3">{floral.color || "Chưa cập nhật"}</dd>
 
-            <dt className="col-sm-4">Trạng thái</dt>
-            <dd className="col-sm-8 mb-3">{floral.status}</dd>
+                        <dt className="col-sm-4">Trạng thái</dt>
+                        <dd className="col-sm-8 mb-3">{floral.status}</dd>
 
-            <dt className="col-sm-4">Số lượng</dt>
-            <dd className="col-sm-8 mb-3">{floral.quantity}</dd>
-          </dl>
+                        <dt className="col-sm-4">Số lượng</dt>
+                        <dd className="col-sm-8 mb-3">{floral.quantity}</dd>
+                    </dl>
 
-          <h4 className="mb-0">🌸 Mô tả</h4>
-          <hr />
-          <p className="lead">{floral.description}</p>
-        </div>
-      </div>
+                    <h4 className="mb-0">🌸 Mô tả</h4>
+                    <hr />
+                    <p className="lead">{floral.description}</p>
+                </div>
+            </div>
 
-      {/* Sản phẩm liên quan */}
-      {/* <div className="row">
+            {/* Sản phẩm liên quan */}
+            {/* <div className="row">
         <div className="col-md-12 mb-4">
           <hr />
           <h4 className="text-muted my-4">Sản phẩm liên quan</h4>
@@ -152,8 +148,8 @@ function ProductDetail() {
           </div>
         </div>
       </div> */}
-    </div>
-  );
+        </div>
+    );
 }
 
 export default ProductDetail;

@@ -39,7 +39,14 @@ function FilterMenuLeft({ filterSubmit }) {
                     {categories &&
                         categories.map((v) => (
                             <div key={v._id} className="mb-2 d-flex align-items-center">
-                                <input className="form-check-input" type="checkbox" id={v._id} name="categories" value={v._id} style={{ height: "15px", width: "15px" }} />
+                                <input
+                                    className="form-check-input"
+                                    type="checkbox"
+                                    id={v._id}
+                                    name="categories"
+                                    value={v.name}
+                                    style={{ height: "15px", width: "15px" }}
+                                />
                                 <label htmlFor={v._id} className="ms-2">
                                     {v.name}
                                 </label>
