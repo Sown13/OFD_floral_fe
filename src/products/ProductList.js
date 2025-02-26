@@ -12,9 +12,14 @@ function FilterMenuLeft({ filterSubmit }) {
     const [categories, setCategories] = useState([]);
 
     useEffect(() => {
-        categoryServices.getCategories().then((response) => {
-            setCategories(response);
-        });
+        categoryServices
+            .getCategories()
+            .then((response) => {
+                setCategories(response);
+            })
+            .catch((error) => {
+                toastMessage.error(error?.message || "❌ Lỗi khi tải danh sách hoa!");
+            });
     }, []);
 
     const handleSubmit = (e) => {
@@ -39,14 +44,7 @@ function FilterMenuLeft({ filterSubmit }) {
                     {categories &&
                         categories.map((v) => (
                             <div key={v._id} className="mb-2 d-flex align-items-center">
-                                <input
-                                    className="form-check-input"
-                                    type="checkbox"
-                                    id={v._id}
-                                    name="categories"
-                                    value={v.name}
-                                    style={{ height: "15px", width: "15px" }}
-                                />
+                                <input className="form-check-input" type="checkbox" id={v._id} name="categories" value={v.name} style={{ height: "15px", width: "15px" }} />
                                 <label htmlFor={v._id} className="ms-2">
                                     {v.name}
                                 </label>

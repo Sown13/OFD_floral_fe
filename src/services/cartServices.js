@@ -1,5 +1,4 @@
 import api from "../api/api";
-import toastMessage from "../components/Toast";
 
 const cartService = {
     addToCart: async (items) => {
