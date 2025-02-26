@@ -23,12 +23,11 @@ function Landing() {
                 <p className="text-center px-5">
                     🌸 Chào mừng đến với Florist – Nơi Gửi Gắm Yêu Thương Qua Từng Đóa Hoa! 🌿
                     <br />
-                    Hoa không chỉ là một món quà, mà còn là thông điệp yêu thương, sự quan tâm và những cảm xúc chân thành. Tại FlowerCorner, chúng
-                    tôi mang đến những bó hoa tươi thắm, rực rỡ nhất để giúp bạn gửi gắm lời yêu thương đến những người thân yêu.
+                    Hoa không chỉ là một món quà, mà còn là thông điệp yêu thương, sự quan tâm và những cảm xúc chân thành. Tại FlowerCorner, chúng tôi mang đến những bó hoa tươi thắm, rực rỡ nhất để
+                    giúp bạn gửi gắm lời yêu thương đến những người thân yêu.
                     <br />
-                    Dù là sinh nhật, kỷ niệm, chúc mừng hay chỉ đơn giản là muốn tạo niềm vui, chúng tôi có những thiết kế hoa tinh tế, phù hợp cho
-                    mọi dịp. Với dịch vụ giao hoa tận nơi nhanh chóng, chất lượng đảm bảo, chúng tôi cam kết mang đến cho bạn trải nghiệm tuyệt vời
-                    nhất.
+                    Dù là sinh nhật, kỷ niệm, chúc mừng hay chỉ đơn giản là muốn tạo niềm vui, chúng tôi có những thiết kế hoa tinh tế, phù hợp cho mọi dịp. Với dịch vụ giao hoa tận nơi nhanh chóng,
+                    chất lượng đảm bảo, chúng tôi cam kết mang đến cho bạn trải nghiệm tuyệt vời nhất.
                     <br />
                     Hãy để những cánh hoa thay lời bạn muốn nói! 💐✨
                 </p>
@@ -47,13 +46,7 @@ function Landing() {
                         <div className="col" key={floral._id}>
                             <div className="card shadow-sm product-card">
                                 <Link to={`/products/${floral._id}`} style={{ display: "block", height: "240px" }}>
-                                    <img
-                                        className="card-img-top bg-dark"
-                                        style={{ objectFit: "cover" }}
-                                        height="240"
-                                        alt={floral.name}
-                                        src={floral.cover}
-                                    />
+                                    <img className="card-img-top bg-dark" style={{ objectFit: "cover" }} height="240" alt={floral.name} src={floral.cover} />
                                 </Link>
                                 <div className="card-body">
                                     <h5 className="card-title text-center text-dark text-truncate">{floral.name}</h5>
