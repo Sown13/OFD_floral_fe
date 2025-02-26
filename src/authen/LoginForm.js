@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import authenServices from "../services/authenServices";
+import toastMessage from "../components/Toast";
 
 function LoginForm() {
     const [username, setUserName] = useState("");
@@ -9,7 +10,23 @@ function LoginForm() {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        authenServices.login({ username, password });
+        authenServices
+            .login({ username, password })
+            .then((response) => {
+                const { accessToken, refreshToken } = response;
+                localStorage.setItem("token", accessToken);
+                localStorage.setItem("refreshToken", refreshToken);
+                toastMessage.success("🎉 Đăng nhập thành công!");
+                const redirectPath = localStorage.getItem("redirectAfterLogin") || "/";
+                localStorage.removeItem("redirectAfterLogin");
+                setTimeout(() => {
+                    window.location.href = redirectPath;
+                }, 1000);
+            })
+            .catch((error) => {
+                console.error("Caught error:", error);
+                toastMessage.error(error?.message || "❌ Đăng nhập thất bại!");
+            });
     };
 
     return (
@@ -19,35 +36,15 @@ function LoginForm() {
                 <form onSubmit={handleLogin}>
                     <div className="mb-3">
                         <label className="form-label">Username</label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            placeholder="Enter username"
-                            required
-                            value={username}
-                            onChange={(e) => setUserName(e.target.value)}
-                        />
+                        <input type="text" className="form-control" placeholder="Enter username" required value={username} onChange={(e) => setUserName(e.target.value)} />
                     </div>
                     <div className="mb-3">
                         <label className="form-label">Password</label>
-                        <input
-                            type="password"
-                            className="form-control"
-                            placeholder="Enter password"
-                            required
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
+                        <input type="password" className="form-control" placeholder="Enter password" required value={password} onChange={(e) => setPassword(e.target.value)} />
                     </div>
                     <div className="d-flex justify-content-between align-items-center mb-3">
                         <div className="form-check">
-                            <input
-                                type="checkbox"
-                                className="form-check-input"
-                                id="rememberMe"
-                                checked={rememberMe}
-                                onChange={(e) => setRememberMe(e.target.checked)}
-                            />
+                            <input type="checkbox" className="form-check-input" id="rememberMe" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />
                             <label className="form-check-label" htmlFor="rememberMe">
                                 Remember me
                             </label>

@@ -25,6 +25,7 @@ function Product({ floral, index, percentOff = 15 }) {
     if (!floral) {
         return <p>Loading product...</p>;
     }
+
     const addToCart = (item) => {
         if (!token) {
             toastMessage.error("Bạn cần đăng nhập để thêm vào giỏ hàng!");
@@ -57,29 +58,27 @@ function Product({ floral, index, percentOff = 15 }) {
                             {percentOff}% OFF
                         </div>
                     )}
-                    <img
-                        className="card-img-top bg-dark"
-                        style={{ objectFit: "cover", width: "100%", height: "100%" }}
-                        alt={floral.name}
-                        src={floral.cover}
-                    />
+                    <img className="card-img-top bg-dark" style={{ objectFit: "cover", width: "100%", height: "100%" }} alt={floral.name} src={floral.cover} />
                 </Link>
                 <div className="card-body">
                     <h5 className="card-title text-center text-dark text-truncate">{floral.name}</h5>
                     <p className="card-text text-center text-muted mb-0">
                         {isDiscounted ? (
                             <>
-                                <del>{floral.price.toLocaleString()} VND</del>{" "}
-                                <span className="text-danger fw-bold">{discountedPrice.toLocaleString()} VND</span>
+                                <del>{floral.price.toLocaleString()} VND</del> <span className="text-danger fw-bold">{discountedPrice.toLocaleString()} VND</span>
                             </>
                         ) : (
                             `${floral.price.toLocaleString()} VND`
                         )}
                     </p>
                     <div className="d-grid d-block">
-                        <button className="btn btn-outline-dark mt-3" onClick={() => addToCart(floral)}>
-                            <FontAwesomeIcon icon={["fas", "cart-plus"]} /> Thêm vào giỏ
-                        </button>
+                        {floral.quantity > 0 ? (
+                            <button className="btn btn-outline-dark mt-3" onClick={() => addToCart(floral)}>
+                                <FontAwesomeIcon icon={["fas", "cart-plus"]} /> Thêm vào giỏ
+                            </button>
+                        ) : (
+                            <p className="text-danger text-center fw-bold mt-3 d-block user-select-none">Hết hàng</p>
+                        )}
                     </div>
                 </div>
             </div>
