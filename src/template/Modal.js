@@ -1,10 +1,13 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useContext } from "react";
 import floralsServices from "../services/floralsServices";
 import { debounce } from "lodash";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import categoryServices from "../services/categoryServices";
+import { RefreshContext } from "../components/RefreshOutLet";
+import toastMessage from "../components/Toast";
 
 const AddFlowerModal = () => {
+    const { refreshOutlet } = useContext(RefreshContext);
     const [images, setImages] = useState([]);
     const [categories, setCategories] = useState([]);
     const [allCategories, setAllCategories] = useState([]);
@@ -12,15 +15,17 @@ const AddFlowerModal = () => {
     const [showDropdown, setShowDropdown] = useState(false);
 
     useEffect(() => {
-        categoryServices.getCategories().then((response) => {
-            setAllCategories(response);
-        });
+        categoryServices
+            .getCategories()
+            .then((response) => {
+                setAllCategories(response);
+            })
+            .catch((error) => {
+                toastMessage.error(error?.message || "❌ Lỗi khi tải danh mục!");
+            });
     }, []);
 
-    const filteredCategories = useMemo(
-        () => allCategories.filter((category) => category.name.toLowerCase().includes(categoryInput.toLowerCase())),
-        [categoryInput, allCategories]
-    );
+    const filteredCategories = useMemo(() => allCategories.filter((category) => category.name.toLowerCase().includes(categoryInput.toLowerCase())), [categoryInput, allCategories]);
 
     const handleAddCategory = (category) => {
         if (!categories.some((c) => c._id === category._id)) {
@@ -46,7 +51,19 @@ const AddFlowerModal = () => {
         const flowerData = Object.fromEntries(formData.entries());
         flowerData.categories = categories.map((category) => category.name);
         flowerData.images = images.map((image) => image.src);
-        floralsServices.createFloral(flowerData).then((response) => {});
+        toastMessage.success("Add sản phẩm thành công");
+        floralsServices
+            .createFloral(flowerData)
+            .then((response) => {
+                toastMessage.success("Add sản phẩm thành công");
+                e.target.reset();
+                setCategories([]);
+                setImages([]);
+                refreshOutlet();
+            })
+            .catch((error) => {
+                toastMessage.error(error?.message || "❌ Lỗi khi tạo hoa!");
+            });
     };
 
     return (
@@ -104,12 +121,7 @@ const AddFlowerModal = () => {
                                             {showDropdown && filteredCategories.length > 0 && (
                                                 <ul className="dropdown-menu show mt-1">
                                                     {filteredCategories.map((category, index) => (
-                                                        <li
-                                                            key={category._id}
-                                                            className="dropdown-item"
-                                                            onMouseDown={() => handleAddCategory(category)}
-                                                            style={{ cursor: "pointer" }}
-                                                        >
+                                                        <li key={category._id} className="dropdown-item" onMouseDown={() => handleAddCategory(category)} style={{ cursor: "pointer" }}>
                                                             {category.name}
                                                         </li>
                                                     ))}
@@ -126,22 +138,13 @@ const AddFlowerModal = () => {
                                 <div className="col-12 mb-3">
                                     <div className="d-flex align-items-center">
                                         <label className="form-label text-primary">Hình ảnh phụ</label>
-                                        <FontAwesomeIcon
-                                            icon="fa-solid fa-plus-circle"
-                                            className="fs-5 ms-2 text-success cursor-pointer"
-                                            onClick={handleAddImage}
-                                        />
+                                        <FontAwesomeIcon icon="fa-solid fa-plus-circle" className="fs-5 ms-2 text-success cursor-pointer" onClick={handleAddImage} />
                                     </div>
                                     <div className="row">
                                         {images.length > 0 &&
                                             images.map((image, index) => (
                                                 <div className="col-md-3" key={index}>
-                                                    <input
-                                                        type="text"
-                                                        className="form-control mb-2"
-                                                        value={image.src}
-                                                        onChange={(e) => handleImageChange(index, e.target.value)}
-                                                    />
+                                                    <input type="text" className="form-control mb-2" value={image.src} onChange={(e) => handleImageChange(index, e.target.value)} />
                                                     <img
                                                         alt=""
                                                         src={image.src}
@@ -172,6 +175,7 @@ const AddFlowerModal = () => {
 };
 
 const UpdateFlowerModal = () => {
+    const { refreshOutlet } = useContext(RefreshContext);
     const [filteredFlowers, setFilteredFlowers] = useState([]);
     const [selectedFlower, setSelectedFlower] = useState(null);
     const [showDropdown, setShowDropdown] = useState(false);
@@ -187,6 +191,29 @@ const UpdateFlowerModal = () => {
             ...flowerData,
             [e.target.name]: e.target.value,
         });
+        setSelectedFlower({
+            ...selectedFlower,
+            [e.target.name]: e.target.value,
+        });
+    };
+
+    const handleChangeImages = (e, index = null) => {
+        const { name, value } = e.target;
+
+        if (name.startsWith("images_") && index !== null) {
+            if (!selectedFlower || !selectedFlower.images) return;
+            const updatedImages = [...selectedFlower.images];
+            updatedImages[index] = value;
+            setSelectedFlower((prevState) => ({
+                ...prevState,
+                images: updatedImages,
+            }));
+        } else {
+            setSelectedFlower((prevState) => ({
+                ...prevState,
+                [name]: value,
+            }));
+        }
     };
 
     const fetchFlowers = async (value) => {
@@ -195,10 +222,15 @@ const UpdateFlowerModal = () => {
             setShowDropdown(false);
             return;
         }
-        floralsServices.getFlorals(1, 10, value).then((data) => {
-            setFilteredFlowers(data.data);
-            setShowDropdown(true);
-        });
+        floralsServices
+            .getFlorals(1, 10, value)
+            .then((data) => {
+                setFilteredFlowers(data.data);
+                setShowDropdown(true);
+            })
+            .catch((error) => {
+                toastMessage.error(error?.message || "❌ Lỗi khi tải danh sách hoa!");
+            });
     };
 
     const loadData = useMemo(() => debounce(fetchFlowers, 800), []);
@@ -226,11 +258,34 @@ const UpdateFlowerModal = () => {
             }
         }
         updatedFlower = { ...updatedFlower, images: imagesArray };
-        floralsServices.updateFloral(selectedFlower._id, updatedFlower).then((response) => {});
+        floralsServices
+            .updateFloral(selectedFlower._id, updatedFlower)
+            .then((response) => {
+                form.reset();
+                setInputValue("");
+                setFilteredFlowers([]);
+                setSelectedFlower(null);
+                refreshOutlet();
+            })
+            .catch((error) => {
+                toastMessage.error(error?.message || "❌ Lỗi khi cập nhật hoa!");
+            });
     };
 
     const handleDelete = () => {
-        floralsServices.deleteFloral(selectedFlower._id).then((response) => {});
+        floralsServices
+            .deleteFloral(selectedFlower._id)
+            .then((response) => {
+                const form = document.getElementById("editForm");
+                if (form) form.reset();
+                setSelectedFlower(null);
+                setFilteredFlowers([]);
+                setInputValue("");
+                refreshOutlet();
+            })
+            .catch((error) => {
+                toastMessage.error(error?.message || "❌ Lỗi khi xóa hoa!");
+            });
     };
 
     return (
@@ -258,12 +313,7 @@ const UpdateFlowerModal = () => {
                             {showDropdown && filteredFlowers.length > 0 && (
                                 <ul className="dropdown-menu show" style={{ width: "100%" }}>
                                     {filteredFlowers.map((flower) => (
-                                        <li
-                                            key={flower.id}
-                                            className="dropdown-item d-flex align-items-center"
-                                            onMouseDown={() => handleSelectFlower(flower)}
-                                            style={{ cursor: "pointer" }}
-                                        >
+                                        <li key={flower._id} className="dropdown-item d-flex align-items-center" onMouseDown={() => handleSelectFlower(flower)} style={{ cursor: "pointer" }}>
                                             <img
                                                 alt={flower.name}
                                                 src={flower.cover}
@@ -281,14 +331,13 @@ const UpdateFlowerModal = () => {
                             )}
                         </div>
                         <label className="form-label fw-bold text-primary fs-5">Thông tin chung</label>
-                        {/* Flower Update Form */}
                         {selectedFlower && (
                             <form id="editForm">
                                 <div className="row">
                                     <div className="col-md-12 mb-1">
                                         <div className="row">
                                             <div className="col-md-4">
-                                                <input type="text" className="form-control" name="cover" value={selectedFlower.cover} />
+                                                <input type="text" className="form-control" name="cover" value={selectedFlower.cover || ""} onChange={handleChange} />
                                             </div>
                                         </div>
                                     </div>
@@ -308,108 +357,52 @@ const UpdateFlowerModal = () => {
                                         <div className="row">
                                             <div className="col-md-6 mb-3">
                                                 <label className="form-label text-primary">Tên</label>
-                                                <input
-                                                    type="text"
-                                                    className="form-control"
-                                                    name="name"
-                                                    value={flowerData.name || ""}
-                                                    onChange={handleChange}
-                                                    required
-                                                />
+                                                <input type="text" className="form-control" name="name" value={flowerData.name || ""} onChange={handleChange} />
                                             </div>
                                             <div className="col-md-6 mb-3">
                                                 <label className="form-label text-primary">Giá cả</label>
-                                                <input
-                                                    type="number"
-                                                    className="form-control"
-                                                    name="price"
-                                                    value={flowerData.price || ""}
-                                                    onChange={handleChange}
-                                                    required
-                                                />
+                                                <input type="number" className="form-control" name="price" value={flowerData.price || ""} onChange={handleChange} />
                                             </div>
                                             <div className="col-md-6 mb-3">
                                                 <label className="form-label text-primary">Phân loại</label>
-                                                <input
-                                                    type="text"
-                                                    className="form-control"
-                                                    name="category"
-                                                    value={flowerData.category || ""}
-                                                    onChange={handleChange}
-                                                    required
-                                                />
+                                                <input type="text" className="form-control" name="categories" value={flowerData.categories || ""} onChange={handleChange} />
                                             </div>
                                             <div className="col-md-6 mb-3">
                                                 <label className="form-label text-primary">Màu sắc</label>
-                                                <input
-                                                    type="text"
-                                                    className="form-control"
-                                                    name="color"
-                                                    value={flowerData.color || ""}
-                                                    onChange={handleChange}
-                                                    required
-                                                />
+                                                <input type="text" className="form-control" name="color" value={flowerData.color || ""} onChange={handleChange} />
                                             </div>
                                             <div className="col-md-6 mb-3">
                                                 <label className="form-label text-primary">Số lượng</label>
-                                                <input
-                                                    type="number"
-                                                    className="form-control"
-                                                    name="quantity"
-                                                    value={flowerData.quantity || ""}
-                                                    onChange={handleChange}
-                                                    required
-                                                />
+                                                <input type="number" className="form-control" name="quantity" value={flowerData.quantity || ""} onChange={handleChange} />
                                             </div>
                                             <div className="col-md-6 mb-3">
                                                 <label className="form-label text-primary">Trạng thái</label>
-                                                <input
-                                                    type="text"
-                                                    className="form-control"
-                                                    name="status"
-                                                    value={flowerData.status || ""}
-                                                    onChange={handleChange}
-                                                    required
-                                                />
+                                                <input type="text" className="form-control" name="status" value={flowerData.status || ""} onChange={handleChange} />
                                             </div>
                                             <div className="col-12 mb-3">
                                                 <label className="form-label text-primary">Mô tả</label>
-                                                <textarea
-                                                    className="form-control"
-                                                    rows="4"
-                                                    name="description"
-                                                    value={flowerData.description || ""}
-                                                    onChange={handleChange}
-                                                ></textarea>
+                                                <textarea className="form-control" rows="4" name="description" value={flowerData.description || ""} onChange={handleChange}></textarea>
                                             </div>
                                         </div>
                                     </div>
-                                    <div
-                                        className="col-md-12 text-center p-1 expand-div mt-2"
-                                        data-bs-toggle="collapse"
-                                        data-bs-target="#flowerDetails"
-                                    >
+                                    <div className="col-md-12 text-center p-1 expand-div mt-2" data-bs-toggle="collapse" data-bs-target="#flowerDetails">
                                         Xem chi tiết ảnh <FontAwesomeIcon icon="fa-solid fa-caret-down" />
                                     </div>
                                     <div className="collapse mt-2" id="flowerDetails">
                                         <div className="card card-body">
                                             <div className="row">
-                                                {selectedFlower &&
-                                                    selectedFlower.images.map((src, index) => (
-                                                        <div className="col-md-3" key={index}>
-                                                            <img
-                                                                alt=""
-                                                                src={src}
-                                                                style={{
-                                                                    width: "100%",
-                                                                    height: "auto",
-                                                                    borderRadius: "8px",
-                                                                    objectFit: "cover",
-                                                                }}
-                                                            />
-                                                            <input name={`images_${index}`} type="text" value={src} className="form-control mt-1" />
-                                                        </div>
-                                                    ))}
+                                                {selectedFlower.images.map((src, index) => (
+                                                    <div className="col-md-3" key={index}>
+                                                        <input
+                                                            name={`images_${index}`}
+                                                            type="text"
+                                                            value={src || ""}
+                                                            className="form-control mb-1"
+                                                            onChange={(event) => handleChangeImages(event, index)}
+                                                        />
+                                                        <img alt="" src={src || ""} style={{ width: "100%", height: "auto", borderRadius: "8px", objectFit: "cover" }} />
+                                                    </div>
+                                                ))}
                                             </div>
                                         </div>
                                     </div>
@@ -417,23 +410,25 @@ const UpdateFlowerModal = () => {
                             </form>
                         )}
                     </div>
-                    <div className="modal-footer">
-                        <button onClick={handleUpdate} className="btn btn-success">
-                            <FontAwesomeIcon icon="fa-solid fa-save" />
-                            <b className="ms-1">Cập nhật</b>
-                        </button>
-                        <button type="button" className="btn btn-danger ms-2" onClick={handleDelete}>
-                            <FontAwesomeIcon icon="fa-solid fa-trash" />
-                            <b className="ms-1">Xóa</b>
-                        </button>
-                    </div>
+                    {selectedFlower && (
+                        <div className="modal-footer">
+                            <button onClick={handleUpdate} className="btn btn-success">
+                                <FontAwesomeIcon icon="fa-solid fa-save" />
+                                <b className="ms-1">Cập nhật</b>
+                            </button>
+                            <button type="button" className="btn btn-danger ms-2" onClick={handleDelete}>
+                                <FontAwesomeIcon icon="fa-solid fa-trash" />
+                                <b className="ms-1">Xóa</b>
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
     );
 };
 
-export const Modal = () => (
+export const FunctionModal = () => (
     <>
         <AddFlowerModal />
         <UpdateFlowerModal />

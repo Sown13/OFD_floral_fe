@@ -3,11 +3,12 @@ import { useEffect } from "react";
 import Template from "./template/Template";
 import Cart from "./products/Cart";
 import ProductList from "./products/ProductList";
-import ProductDetail from "./products/detail/ProductDetail";
+import ProductDetail from "./products/ProductDetail";
 import LoginForm from "./authen/LoginForm";
 import RegisterForm from "./authen/RegisterForm";
 import Landing from "./landing/Landing";
 import ProtectedRoute from "./config/ProtectedRoute";
+import OrderHistory from "./products/OrderHistory";
 
 function App() {
     const location = useLocation();
@@ -28,6 +29,7 @@ function App() {
                 <Route path="/register" element={<RegisterForm />} />
                 <Route element={<ProtectedRoute />}>
                     <Route path="/cart" element={<Cart />} />
+                    <Route path="/orders_history" element={<OrderHistory />} />
                 </Route>
             </Route>
         </Routes>

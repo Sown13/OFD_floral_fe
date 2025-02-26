@@ -12,9 +12,14 @@ function FilterMenuLeft({ filterSubmit }) {
     const [categories, setCategories] = useState([]);
 
     useEffect(() => {
-        categoryServices.getCategories().then((response) => {
-            setCategories(response);
-        });
+        categoryServices
+            .getCategories()
+            .then((response) => {
+                setCategories(response);
+            })
+            .catch((error) => {
+                toastMessage.error(error?.message || "❌ Lỗi khi tải danh sách hoa!");
+            });
     }, []);
 
     const handleSubmit = (e) => {
@@ -39,14 +44,7 @@ function FilterMenuLeft({ filterSubmit }) {
                     {categories &&
                         categories.map((v) => (
                             <div key={v._id} className="mb-2 d-flex align-items-center">
-                                <input
-                                    className="form-check-input"
-                                    type="checkbox"
-                                    id={v._id}
-                                    name="categories"
-                                    value={v.name}
-                                    style={{ height: "15px", width: "15px" }}
-                                />
+                                <input className="form-check-input" type="checkbox" id={v._id} name="categories" value={v.name} style={{ height: "15px", width: "15px" }} />
                                 <label htmlFor={v._id} className="ms-2">
                                     {v.name}
                                 </label>
@@ -92,21 +90,25 @@ function FilterMenuLeft({ filterSubmit }) {
     );
 }
 
-const categories = ["Hoa Sinh Nhật", "Hoa Cưới", "Hoa Khai Trương", "Hoa Chúc Mừng"];
-
 function ProductList() {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [florals, setFlorals] = useState([]);
     const [filters, setFilters] = useState({});
     const [searchData, setsearchData] = useState("");
+    const [stockStatus, setStockStatus] = useState("");
 
     const loadData = useCallback(async () => {
-        floralsServices.getFlorals(currentPage, 10, searchData, filters).then((data) => {
-            setFlorals(data.data);
-            setTotalPages(data.metaData?.totalPages || 1);
-        });
-    }, [currentPage, filters, searchData]);
+        floralsServices
+            .getFlorals(currentPage, 10, searchData, stockStatus, filters)
+            .then((data) => {
+                setFlorals(data.data);
+                setTotalPages(data.metaData?.totalPages || 1);
+            })
+            .catch((error) => {
+                toastMessage.error(error?.message || "❌ Lỗi khi tải danh sách hoa!");
+            });
+    }, [currentPage, filters, searchData, stockStatus]);
 
     useEffect(() => {
         loadData();
@@ -114,67 +116,6 @@ function ProductList() {
 
     const handlePageChange = (selectedPage) => {
         setCurrentPage(selectedPage);
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        const form = e.target;
-        const formData = new FormData(form);
-
-        const request = {
-            name: formData.get("name"),
-            price: Number(formData.get("price")),
-            category:
-                formData
-                    .get("category")
-                    ?.split(",")
-                    .map((cat) => cat.trim()) || [],
-            cover: formData.get("cover"),
-            color: formData.get("color"),
-            images:
-                formData
-                    .get("images")
-                    ?.split(",")
-                    .map((img) => img.trim()) || [],
-            status: formData.get("status"),
-            description: formData.get("description"),
-            quantity: Number(formData.get("quantity")),
-        };
-
-        // Validate fields
-        for (const key in request) {
-            if (!request[key] || (Array.isArray(request[key]) && request[key].length === 0)) {
-                toastMessage.error(`${key} is required`);
-                return;
-            }
-        }
-
-        if (!request.name) {
-            toastMessage.error("Flower name is required");
-            return;
-        }
-        if (!request.price) {
-            toastMessage.error("Price is required");
-            return;
-        }
-        if (!request.category) {
-            toastMessage.error("Category is required");
-            return;
-        }
-        if (!request.cover) {
-            toastMessage.error("Cover image URL is required");
-            return;
-        }
-        if (!request.images) {
-            toastMessage.error("At least one image URL is required");
-            return;
-        }
-
-        floralsServices.createFloral(request).then((response) => {
-            console.log(response);
-            loadData();
-        });
     };
 
     const handleFilterSubmit = (newFilters) => {
@@ -188,6 +129,12 @@ function ProductList() {
         const searchQuery = formData.get("search");
         setCurrentPage(1);
         setsearchData(searchQuery);
+    };
+
+    const handleSelectStock = (event) => {
+        const value = event.target.value;
+        setStockStatus(value);
+        setCurrentPage(1);
     };
 
     return (
@@ -213,15 +160,14 @@ function ProductList() {
                     <div className="d-flex flex-column h-100">
                         <div className="row mb-3">
                             <div className="col-lg-3 d-none d-lg-block">
-                                <select className="form-select" defaultValue="" aria-label="Default select example">
+                                <select className="form-select" value={stockStatus} onChange={handleSelectStock}>
                                     <option value="">Tất cả</option>
-                                    <option value="">Còn hàng</option>
-                                    <option value="">Hết hàng</option>
+                                    <option value="available">Còn hàng</option>
+                                    <option value="outofstock">Hết hàng</option>
                                 </select>
                             </div>
                             <div className="col-lg-9 col-xl-5 offset-xl-4 d-flex flex-row">
                                 <div className="input-group">
-                                    {/* Search Input */}
                                     <form onSubmit={handleSearchSubmit} className="d-flex w-100">
                                         <input className="form-control" type="text" placeholder="Tìm tên / mô tả..." name="search" />
                                         <button className="btn btn-outline-dark" type="submit">

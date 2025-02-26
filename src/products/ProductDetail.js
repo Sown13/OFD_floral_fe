@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import floralsServices from "../../services/floralsServices";
-import RelatedProduct from "./RelatedProduct";
-import ScrollToTopOnMount from "../../template/ScrollToTopOnMount";
-import toastMessage from "../../components/Toast";
+import floralsServices from "../services/floralsServices";
+import ScrollToTopOnMount from "../template/ScrollToTopOnMount";
+import toastMessage from "../components/Toast";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 function ProductDetail() {
     const { id } = useParams();
@@ -83,71 +83,41 @@ function ProductDetail() {
 
             <div className="row mb-4">
                 <div className="col-lg-6">
-                    <img className="border rounded ratio ratio-1x1" alt={floral.name} src={floral.images} />
-                    {/* <div className="d-flex flex-nowrap mt-3" style={{ overflowX: "scroll" }}>
-            {floral.images.map((img, index) => (
-              <img
-                key={index}
-                className="cover rounded me-2"
-                width="70"
-                height="70"
-                src={img}
-                alt={floral.name}
-              />
-            ))}
-          </div> */}
+                    <img className="border rounded ratio ratio-1x1" alt={floral.name} src={floral.cover} />
                 </div>
-
-                {/* Thông tin sản phẩm */}
                 <div className="col-lg-5">
                     <h2 className="mb-1">{floral.name}</h2>
                     <h4 className="text-muted mb-4">{floral.price.toLocaleString()} VND</h4>
 
                     <div className="row g-3 mb-4">
                         <div className="col">
-                            <button className="btn btn-outline-dark py-2 w-100" onClick={addToCart}>
-                                Thêm vào giỏ
-                            </button>
+                            {floral.quantity > 0 ? (
+                                <button className="btn btn-outline-dark py-2 w-100" onClick={addToCart}>
+                                    <FontAwesomeIcon icon={["fas", "cart-plus"]} className="me-2" />
+                                    Thêm vào giỏ
+                                </button>
+                            ) : (
+                                <p className="text-danger fs-4 m-0 fw-bold d-block user-select-none">Hết hàng</p>
+                            )}
                         </div>
-                        {/* <div className="col">
-              <button className="btn btn-dark py-2 w-100">Mua ngay</button>
-            </div> */}
                     </div>
-
                     <h4 className="mb-0">Chi tiết sản phẩm</h4>
                     <hr />
-                    <dl className="row">
-                        <dt className="col-sm-4">Loại Hoa</dt>
-                        <dd className="col-sm-8 mb-3">{floral.categories.join(", ")}</dd>
-
-                        <dt className="col-sm-4">Màu sắc</dt>
-                        <dd className="col-sm-8 mb-3">{floral.color || "Chưa cập nhật"}</dd>
-
-                        <dt className="col-sm-4">Trạng thái</dt>
-                        <dd className="col-sm-8 mb-3">{floral.status}</dd>
-
-                        <dt className="col-sm-4">Số lượng</dt>
-                        <dd className="col-sm-8 mb-3">{floral.quantity}</dd>
-                    </dl>
-
+                    <div className="row">
+                        <div className="col-sm-4">Loại Hoa</div>
+                        <div className="col-sm-8 mb-3">{floral.categories || "Chưa cập nhật"}</div>
+                        <div className="col-sm-4">Màu sắc</div>
+                        <div className="col-sm-8 mb-3">{floral.color || "Chưa cập nhật"}</div>
+                        <div className="col-sm-4">Trạng thái</div>
+                        <div className="col-sm-8 mb-3">{floral.status || "Chưa cập nhật"}</div>
+                        <div className="col-sm-4">Số lượng</div>
+                        <div className="col-sm-8 mb-3">{floral.quantity || 0}</div>
+                    </div>
                     <h4 className="mb-0">🌸 Mô tả</h4>
                     <hr />
                     <p className="lead">{floral.description}</p>
                 </div>
             </div>
-
-            {/* Sản phẩm liên quan */}
-            {/* <div className="row">
-        <div className="col-md-12 mb-4">
-          <hr />
-          <h4 className="text-muted my-4">Sản phẩm liên quan</h4>
-          <div className="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-3">
-            {[...Array(4)].map((_, i) => (
-              <RelatedProduct key={i} percentOff={i % 2 === 0 ? 15 : null} />
-            ))}
-          </div>
-        </div>
-      </div> */}
         </div>
     );
 }
