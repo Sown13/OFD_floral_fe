@@ -51,16 +51,16 @@ function Header() {
                         <ul className="navbar-nav me-auto mb-lg-0">
                             <li className="nav-item">
                                 <Link to="/products" className="nav-link" replace>
-                                    Products
+                                    Sản phẩm
                                 </Link>
                             </li>
                             <li className="nav-item">
                                 <Link to="/orders_history" className="nav-link" replace>
-                                    Order history
+                                    Lịch sử đơn hàng
                                 </Link>
                             </li>
                         </ul>
-                        {decodedToken && (
+                        {decodedToken && decodedToken.role === "admin" && (
                             <>
                                 <button className="btn btn-outline-dark me-2" data-bs-toggle="modal" data-bs-target="#addFlower" title="Thêm mới">
                                     <FontAwesomeIcon icon={["fas", "plus"]} />
@@ -72,7 +72,7 @@ function Header() {
                         )}
                         <Link to="/cart" className="btn btn-outline-dark me-3 d-none d-lg-inline">
                             <FontAwesomeIcon icon={["fas", "shopping-cart"]} />
-                            <span className="ms-2">Cart</span>
+                            <span className="ms-2">Giỏ hàng</span>
                         </Link>
                         <ul className="navbar-nav mb-2 mb-lg-0">
                             <li className="nav-item dropdown">
@@ -96,10 +96,8 @@ function Header() {
                                         </li>
                                     )}
                                     {token && (
-                                        <li>
-                                            <a href="#" className="dropdown-item" onClick={logout}>
-                                                Logout
-                                            </a>
+                                        <li className="dropdown-item" onClick={logout} style={{ cursor: "pointer" }}>
+                                            Logout
                                         </li>
                                     )}
                                 </ul>
