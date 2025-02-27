@@ -107,7 +107,7 @@ const ChatBox = () => {
                                 <FontAwesomeIcon icon="fa-solid fa-times" />
                             </button>
                         </div>
-                        <div className="card-body chat-box" style={{ height: "300px", overflowY: "auto" }} ref={chatBoxRef}>
+                        <div className="card-body chat-box" style={{ height: "400px", overflowY: "auto" }} ref={chatBoxRef}>
                             {messages.map((msg, index) => (
                                 <div key={index} className={`d-flex mb-2 ${msg.sender === decodedToken?.username ? "justify-content-end" : "justify-content-start"}`}>
                                     <div className={`p-2 rounded ${msg.sender === decodedToken?.username ? "bg-primary text-white" : "bg-light"}`} style={{ maxWidth: "75%" }}>
