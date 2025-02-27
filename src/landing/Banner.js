@@ -56,7 +56,19 @@ function Banner() {
                                 }}
                             />
                         </div>
-                        <div className="carousel-caption d-none d-lg-block text-dark">
+                        {/* Full-width background for caption */}
+                        <div
+                            className="carousel-caption d-none d-lg-block text-white"
+                            style={{
+                                position: "absolute",
+                                bottom: "0",
+                                left: "0",
+                                width: "100%",
+                                background: "rgba(0, 0, 0, 0.5)", // Dark semi-transparent background
+                                padding: "15px 20px",
+                                textAlign: "center",
+                            }}
+                        >
                             <h5 className="fw-bold">{banner.title}</h5>
                             <p className="fw-normal">{banner.description}</p>
                         </div>
